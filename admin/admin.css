@@ -1,0 +1,35 @@
+:root {
+  --gold: #C49619;
+  --black: #070707;
+  --ivory: #FFFDF9;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--ivory);
+  color: var(--black);
+  font-family: 'Jost', system-ui, sans-serif;
+}
+
+.login-shell {
+  max-width: 380px;
+  margin: 18vh auto 0;
+  padding: 0 24px;
+  text-align: center;
+}
+.login-shell h1 {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 30px;
+  margin: 0 0 8px;
+}
+.login-shell p.hint { color: #6B6660; font-size: 14px; margin: 0 0 32px; }
+.login-shell form { display: flex; flex-direction: column; gap: 16px; text-align: left; }
+.login-shell label { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #6B6660; display: flex; flex-direction: column; gap: 6px; }
+.login-shell input { font: inherit; padding: 12px 14px; border: 1px solid rgba(7,7,7,.22); background: #fff; border-radius: 2px; }
+.login-shell button { margin-top: 8px; background: var(--black); color: var(--ivory); border: 0; padding: 14px; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; cursor: pointer; border-radius: 2px; }
+.login-shell button:hover { background: var(--gold); color: var(--black); }
+.error { color: #9B3B2E; font-size: 13px; }

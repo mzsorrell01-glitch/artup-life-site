@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Artists — ArtUp Life</title>
+<meta name="description" content="Meet the artists shaping the Kingston Graduation Collection.">
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital@1&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <a href="/" class="logo">
+      <img src="/assets/monogram.png" alt="ArtUp Life" data-cms="header.logo" />
+      <span class="logo-word"><span class="logo-word__artup">ArtUp</span><span class="logo-word__life">LIFE</span></span>
+    </a>
+    <nav class="nav">
+      <a href="/">Home</a>
+      <a href="/about/">About</a>
+      <a href="/artists/">Artists</a>
+      <a href="/collection/">Collection</a>
+      <a href="/how-it-works/">How It Works</a>
+      <a href="/campus-canvas/">Campus Canvas</a>
+      <a href="/events/">Events</a>
+      <a href="/contact/">Contact</a>
+    </nav>
+    <button class="nav-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+  </div>
+</header>
+
+<main>
+  <section class="split" style="min-height:auto;">
+    <div class="split-panel">
+      <h1 class="h-display" data-cms="artists.headline">The<br>Artists</h1>
+      <hr class="gold-rule">
+      <p class="body-copy" data-cms="artists.intro">Meet the artists shaping the Kingston Graduation Collection.</p>
+      <hr class="gold-rule">
+      <div class="filter-tabs">
+        <button class="is-active" data-filter="all">All</button>
+        <button data-filter="painting">Painting</button>
+        <button data-filter="photography">Photography</button>
+        <button data-filter="mixed-media">Mixed Media</button>
+      </div>
+    </div>
+    <div class="split-content">
+      <div class="artist-grid">
+
+        <div class="artist-card" data-medium="mixed-media">
+          <div class="pair">
+            <span class="art-placeholder-fill">Maya Chen — portrait</span>
+            <img src="/assets/work-harbour-light.jpg" alt="Harbour Light, an artwork by Maya Chen">
+          </div>
+          <div class="artist-card__meta">
+            <span class="name" data-cms="artists.mayaChen.name">Maya Chen</span>
+            <a href="/artists/maya-chen/">View Profile <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </div>
+        </div>
+
+        <div class="artist-card" data-medium="photography">
+          <div class="pair">
+            <span class="art-placeholder-fill">Jonah Reed — portrait</span>
+            <img src="/assets/work-after-university-avenue.jpg" alt="An artwork by Jonah Reed">
+          </div>
+          <div class="artist-card__meta">
+            <span class="name" data-cms="artists.jonahReed.name">Jonah Reed</span>
+            <a href="/artists/jonah-reed/">View Profile <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </div>
+        </div>
+
+        <div class="artist-card" data-medium="mixed-media">
+          <div class="pair">
+            <span class="art-placeholder-fill">Nia Okafor — portrait</span>
+            <img src="/assets/work-limestone-weather.jpg" alt="An artwork by Nia Okafor">
+          </div>
+          <div class="artist-card__meta">
+            <span class="name" data-cms="artists.niaOkafor.name">Nia Okafor</span>
+            <a href="/artists/nia-okafor/">View Profile <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </div>
+        </div>
+
+        <div class="artist-card" data-medium="painting">
+          <div class="pair">
+            <span class="art-placeholder-fill">Elena Park — portrait</span>
+            <img src="/assets/work-long-way-home.jpg" alt="An artwork by Elena Park">
+          </div>
+          <div class="artist-card__meta">
+            <span class="name" data-cms="artists.elenaPark.name">Elena Park</span>
+            <a href="/artists/elena-park/">View Profile <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <div class="logo">
+      <img src="/assets/monogram.png" alt="ArtUp Life" data-cms="header.logo" style="height:34px;" />
+      <span class="logo-word"><span class="logo-word__artup">ArtUp</span><span class="logo-word__life">LIFE</span></span>
+    </div>
+    <nav>
+      <a href="/about/">About</a>
+      <a href="/artists/">Artists</a>
+      <a href="/collection/">Collection</a>
+      <a href="/how-it-works/">How It Works</a>
+      <a href="/campus-canvas/">Campus Canvas</a>
+      <a href="/events/">Events</a>
+      <a href="/contact/">Contact</a>
+    </nav>
+  </div>
+  <div class="site-footer__bottom">
+    <span>&copy; 2026 ArtUp Life</span>
+    <span>Kingston, Ontario</span>
+  </div>
+</footer>
+
+<script src="/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Events — ArtUp Life</title>
+<meta name="description" content="Where to see ArtUp — meet the artists, experience the collection and take part in Campus Canvas.">
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital@1&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <a href="/" class="logo">
+      <img src="/assets/monogram.png" alt="ArtUp Life" data-cms="header.logo" />
+      <span class="logo-word"><span class="logo-word__artup">ArtUp</span><span class="logo-word__life">LIFE</span></span>
+    </a>
+    <nav class="nav">
+      <a href="/">Home</a>
+      <a href="/about/">About</a>
+      <a href="/artists/">Artists</a>
+      <a href="/collection/">Collection</a>
+      <a href="/how-it-works/">How It Works</a>
+      <a href="/campus-canvas/">Campus Canvas</a>
+      <a href="/events/">Events</a>
+      <a href="/contact/">Contact</a>
+    </nav>
+    <button class="nav-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+  </div>
+</header>
+
+<main>
+  <section class="split" style="min-height:auto;">
+    <div class="split-panel" style="background:var(--black); position:relative; padding:88px 56px;">
+      <div style="position:relative; z-index:1;">
+        <h1 class="h-display" data-cms="events.headline" data-cms-rich>Where<br>to See Us</h1>
+        <hr class="gold-rule">
+        <p class="body-copy" data-cms="events.intro">Meet the artists, experience the collection and take part in Campus Canvas.</p>
+      </div>
+    </div>
+    <div class="split-content--pad" style="background:var(--ivory); padding:64px 56px;">
+      <p class="eyebrow" data-cms="events.upcomingLabel">Upcoming</p>
+      <div class="event-list">
+        <div class="event-card">
+          <div class="art-placeholder-fill" data-cms="events.event1.photo">event photo</div>
+          <div>
+            <h3 data-cms="events.event1.title">Campus Canvas Pop-Up</h3>
+            <p class="when"><span data-cms="events.event1.date">September 18</span> &nbsp;·&nbsp; <span data-cms="events.event1.location">University District</span></p>
+          </div>
+          <button class="btn" type="button" data-action="demo">
+            <span data-cms="events.event1.cta">Open Event</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+        <div class="event-card">
+          <div class="art-placeholder-fill" data-cms="events.event2.photo">event photo</div>
+          <div>
+            <h3 data-cms="events.event2.title">Kingston Collection Preview</h3>
+            <p class="when"><span data-cms="events.event2.date">October 4</span> &nbsp;·&nbsp; <span data-cms="events.event2.location">Downtown Kingston</span></p>
+          </div>
+          <button class="btn" type="button" data-action="demo">
+            <span data-cms="events.event2.cta">RSVP</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+        <div class="event-card">
+          <div class="art-placeholder-fill" data-cms="events.event3.photo">event photo</div>
+          <div>
+            <h3 data-cms="events.event3.title">Graduate Gifting Exhibition</h3>
+            <p class="when"><span data-cms="events.event3.date">November 15</span> &nbsp;·&nbsp; <span data-cms="events.event3.location">Waterfront Gallery</span></p>
+          </div>
+          <button class="btn" type="button" data-action="demo">
+            <span data-cms="events.event3.cta">Get Directions</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="map-placeholder" aria-hidden="true">
+        <div class="water"></div>
+        <svg class="pin" viewBox="0 0 24 24" fill="currentColor" style="left:22%; top:34%;"><path d="M12 2C8 2 5 5 5 9c0 5.5 7 13 7 13s7-7.5 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z"/></svg>
+        <svg class="pin" viewBox="0 0 24 24" fill="currentColor" style="left:58%; top:22%;"><path d="M12 2C8 2 5 5 5 9c0 5.5 7 13 7 13s7-7.5 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z"/></svg>
+        <svg class="pin" viewBox="0 0 24 24" fill="currentColor" style="left:42%; top:64%;"><path d="M12 2C8 2 5 5 5 9c0 5.5 7 13 7 13s7-7.5 7-13c0-4-3-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z"/></svg>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <div class="logo">
+      <img src="/assets/monogram.png" alt="ArtUp Life" data-cms="header.logo" style="height:34px;" />
+      <span class="logo-word"><span class="logo-word__artup">ArtUp</span><span class="logo-word__life">LIFE</span></span>
+    </div>
+    <nav>
+      <a href="/about/">About</a>
+      <a href="/artists/">Artists</a>
+      <a href="/collection/">Collection</a>
+      <a href="/how-it-works/">How It Works</a>
+      <a href="/campus-canvas/">Campus Canvas</a>
+      <a href="/events/">Events</a>
+      <a href="/contact/">Contact</a>
+    </nav>
+  </div>
+  <div class="site-footer__bottom">
+    <span>&copy; 2026 ArtUp Life</span>
+    <span>Kingston, Ontario</span>
+  </div>
+</footer>
+
+<script src="/script.js"></script>
+<script>
+  document.querySelectorAll('[data-action="demo"]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      if (document.body.classList.contains('cms-editing')) return;
+      var original = btn.querySelector('span').textContent;
+      btn.querySelector('span').textContent = 'Coming soon';
+      btn.disabled = true;
+      setTimeout(function () { btn.querySelector('span').textContent = original; btn.disabled = false; }, 1800);
+    });
+  });
+</script>
+</body>
+</html>

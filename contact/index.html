@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Contact — ArtUp Life</title>
+<meta name="description" content="Let's talk about art. Questions about collecting, participating or working with ArtUp? We'd love to hear from you.">
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital@1&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="site-header__inner">
+    <a href="/" class="logo">
+      <img src="/assets/monogram.png" alt="ArtUp Life" data-cms="header.logo" />
+      <span class="logo-word"><span class="logo-word__artup">ArtUp</span><span class="logo-word__life">LIFE</span></span>
+    </a>
+    <nav class="nav">
+      <a href="/">Home</a>
+      <a href="/about/">About</a>
+      <a href="/artists/">Artists</a>
+      <a href="/collection/">Collection</a>
+      <a href="/how-it-works/">How It Works</a>
+      <a href="/campus-canvas/">Campus Canvas</a>
+      <a href="/events/">Events</a>
+      <a href="/contact/">Contact</a>
+    </nav>
+    <button class="nav-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+  </div>
+</header>
+
+<main>
+  <section class="split" style="min-height:auto;">
+    <div class="split-panel">
+      <h1 class="h-display" data-cms="contact.headline" data-cms-rich>Let's Talk<br>About Art</h1>
+      <hr class="gold-rule">
+      <p class="body-copy" data-cms="contact.intro">Questions about collecting, participating or working with ArtUp? We'd love to hear from you.</p>
+
+      <div class="rule-flanked" style="margin-top:32px;">
+        <span class="line"></span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7-4.5-9.5-9C.7 8.4 2.4 5 6 5c2 0 3.5 1.2 4 2.5.5-1.3 2-2.5 4-2.5 3.6 0 5.3 3.4 3.5 7-2.5 4.5-9.5 9-9.5 9z"/></svg>
+        <span class="line"></span>
+      </div>
+
+      <div class="contact-info">
+        <a href="mailto:hello@artuplife.com">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="5" width="18" height="14" rx="1"/><path d="M3 6l9 7 9-7"/></svg>
+          <span data-cms="contact.email">hello@artuplife.com</span>
+        </a>
+        <a href="#" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1"/></svg>
+          <span data-cms="contact.instagramLabel">Instagram</span>
+        </a>
+        <a href="#" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 10v7M7 7v.01M11 17v-4.5a2.5 2.5 0 015 0V17"/></svg>
+          <span data-cms="contact.linkedinLabel">LinkedIn</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="split-content--pad" style="background:var(--ivory); padding:64px 56px;">
+      <h2 class="h-section" data-cms="contact.formHeading">Send a Message</h2>
+      <hr class="gold-rule">
+
+      <form id="contactForm" novalidate>
+        <div class="form-field">
+          <label for="cf-name">Name</label>
+          <input id="cf-name" name="name" type="text" required>
+          <p class="error-msg">Please enter your name.</p>
+        </div>
+        <div class="form-field">
+          <label for="cf-email">Email</label>
+          <input id="cf-email" name="email" type="email" required>
+          <p class="error-msg">Please enter a valid email address.</p>
+        </div>
+        <div class="form-field">
+          <label for="cf-subject">Subject</label>
+          <input id="cf-subject" name="subject" type="text" required>
+          <p class="error-msg">Please enter a subject.</p>
+        </div>
+        <div class="form-field">
+          <label for="cf-message">Message</label>
+          <textarea id="cf-message" name="message" required></textarea>
+          <p class="error-msg">Please enter a message.</p>
+        </div>
+
+        <div class="check-row">
+          <label class="check-pill"><input type="checkbox" name="topic" value="collector"> Collector</label>
+          <label class="check-pill"><input type="checkbox" name="topic" value="artist"> Artist</label>
+          <label class="check-pill"><input type="checkbox" name="topic" value="campus-canvas"> Campus Canvas</label>
+          <label class="check-pill"><input type="checkbox" name="topic" value="delivery"> Delivery</label>
+        </div>
+
+        <button type="submit" class="btn btn--solid" style="width:100%;">
+          <span data-cms="contact.submitLabel">Send Message</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
+        </button>
+      </form>
+
+      <div class="form-success" id="contactSuccess">
+        <h3 data-cms="contact.successHeading">Thank you.</h3>
+        <p data-cms="contact.successBody">Your message has been received. We reply personally, usually within a couple of days.</p>
+      </div>
+
+      <p class="reassure">
+        <span class="line"></span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7-4.5-9.5-9C.7 8.4 2.4 5 6 5c2 0 3.5 1.2 4 2.5.5-1.3 2-2.5 4-2.5 3.6 0 5.3 3.4 3.5 7-2.5 4.5-9.5 9-9.5 9z"/></svg>
+        <span data-cms="contact.reassure">We reply personally.</span>
+        <span class="line"></span>
+      </p>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <div class="logo">
+      <img src="/assets/monogram.png" alt="ArtUp Life" data-cms="header.logo" style="height:34px;" />
+      <span class="logo-word"><span class="logo-word__artup">ArtUp</span><span class="logo-word__life">LIFE</span></span>
+    </div>
+    <nav>
+      <a href="/about/">About</a>
+      <a href="/artists/">Artists</a>
+      <a href="/collection/">Collection</a>
+      <a href="/how-it-works/">How It Works</a>
+      <a href="/campus-canvas/">Campus Canvas</a>
+      <a href="/events/">Events</a>
+      <a href="/contact/">Contact</a>
+    </nav>
+  </div>
+  <div class="site-footer__bottom">
+    <span>&copy; 2026 ArtUp Life</span>
+    <span>Kingston, Ontario</span>
+  </div>
+</footer>
+
+<script src="/script.js"></script>
+</body>
+</html>
