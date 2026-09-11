@@ -7,7 +7,7 @@
 <meta name="description" content="Meet the artists shaping the Kingston Graduation Collection.">
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital@1&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital@1&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Libre+Caslon+Display&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="/style.css">
 </head>
 <body>
@@ -15,13 +15,11 @@
 <header class="site-header">
   <div class="site-header__inner">
     <a href="/" class="logo">
-      <img src="/assets/monogram.png" alt="ArtUp Life" data-cms="header.logo" />
       <span class="logo-word"><span class="logo-word__artup" data-cms="brand.wordmarkArtup">ArtUp</span><span class="logo-word__life" data-cms="brand.wordmarkLife">LIFE</span></span>
     </a>
     <nav class="nav">
       <a href="/">Home</a>
       <a href="/about/">About</a>
-      <a href="/artists/">Artists</a>
       <a href="/collection/">Collection</a>
       <a href="/how-it-works/">How It Works</a>
       <a href="/campus-canvas/">Campus Canvas</a>
@@ -35,68 +33,14 @@
 </header>
 
 <main>
-  <section class="split" style="min-height:auto;">
-    <div class="split-panel">
-      <h1 class="h-display" data-cms="artists.headline">The<br>Artists</h1>
-      <hr class="gold-rule">
-      <p class="body-copy" data-cms="artists.intro">Meet the artists shaping the Kingston Graduation Collection.</p>
-      <hr class="gold-rule">
-      <div class="filter-tabs">
-        <button class="is-active" data-filter="all">All</button>
-        <button data-filter="painting">Painting</button>
-        <button data-filter="photography">Photography</button>
-        <button data-filter="mixed-media">Mixed Media</button>
-      </div>
+  <section class="section-pad" style="text-align:center; min-height:56vh; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+    <div class="rule-flanked" style="max-width:280px; margin:0 auto 24px;">
+      <span class="line"></span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 21s-7-4.5-9.5-9C.7 8.4 2.4 5 6 5c2 0 3.5 1.2 4 2.5.5-1.3 2-2.5 4-2.5 3.6 0 5.3 3.4 3.5 7-2.5 4.5-9.5 9-9.5 9z"/></svg>
+      <span class="line"></span>
     </div>
-    <div class="split-content">
-      <div class="artist-grid">
-
-        <div class="artist-card" data-medium="mixed-media">
-          <div class="pair">
-            <span class="art-placeholder-fill">Maya Chen — portrait</span>
-            <img src="/assets/work-harbour-light.jpg" alt="Harbour Light, an artwork by Maya Chen">
-          </div>
-          <div class="artist-card__meta">
-            <span class="name" data-cms="artists.mayaChen.name">Maya Chen</span>
-            <a href="/artists/maya-chen/">View Profile <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-          </div>
-        </div>
-
-        <div class="artist-card" data-medium="photography">
-          <div class="pair">
-            <span class="art-placeholder-fill">Jonah Reed — portrait</span>
-            <img src="/assets/work-after-university-avenue.jpg" alt="An artwork by Jonah Reed">
-          </div>
-          <div class="artist-card__meta">
-            <span class="name" data-cms="artists.jonahReed.name">Jonah Reed</span>
-            <a href="/artists/jonah-reed/">View Profile <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-          </div>
-        </div>
-
-        <div class="artist-card" data-medium="mixed-media">
-          <div class="pair">
-            <span class="art-placeholder-fill">Nia Okafor — portrait</span>
-            <img src="/assets/work-limestone-weather.jpg" alt="An artwork by Nia Okafor">
-          </div>
-          <div class="artist-card__meta">
-            <span class="name" data-cms="artists.niaOkafor.name">Nia Okafor</span>
-            <a href="/artists/nia-okafor/">View Profile <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-          </div>
-        </div>
-
-        <div class="artist-card" data-medium="painting">
-          <div class="pair">
-            <span class="art-placeholder-fill">Elena Park — portrait</span>
-            <img src="/assets/work-long-way-home.jpg" alt="An artwork by Elena Park">
-          </div>
-          <div class="artist-card__meta">
-            <span class="name" data-cms="artists.elenaPark.name">Elena Park</span>
-            <a href="/artists/elena-park/">View Profile <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
-          </div>
-        </div>
-
-      </div>
-    </div>
+    <h1 class="h-page" data-cms="artists.comingSoon.headline">Coming Soon</h1>
+    <p class="body-copy" style="max-width:480px;" data-cms="artists.comingSoon.body">We're putting the finishing touches on our artist profiles. Check back soon.</p>
   </section>
 </main>
 
@@ -108,7 +52,6 @@
     </div>
     <nav>
       <a href="/about/">About</a>
-      <a href="/artists/">Artists</a>
       <a href="/collection/">Collection</a>
       <a href="/how-it-works/">How It Works</a>
       <a href="/campus-canvas/">Campus Canvas</a>

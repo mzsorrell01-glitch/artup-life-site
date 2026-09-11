@@ -53,9 +53,16 @@
     });
   });
 
-  // ---- contact form: local validation + success state, no network call ----
+  // ---- contact form: real submission via /api/contact, with a mailto: fallback
+  // if the email backend isn't configured yet (see api/contact.js) ----
+  function currentContactEmail() {
+    var el = document.querySelector('[data-cms="contact.email"]');
+    return (el && el.textContent.trim()) || 'hello@artup.life';
+  }
+
   var contactForm = document.getElementById('contactForm');
   if (contactForm) {
+    var contactSubmitBtn = contactForm.querySelector('button[type="submit"]');
     contactForm.addEventListener('submit', function (e) {
       e.preventDefault();
       var valid = true;
@@ -68,9 +75,41 @@
         if (!ok) valid = false;
       });
       if (!valid) return;
-      contactForm.classList.add('is-submitted');
-      var success = document.getElementById('contactSuccess');
-      if (success) success.classList.add('is-visible');
+
+      var payload = {
+        name: contactForm.elements.name.value.trim(),
+        email: contactForm.elements.email.value.trim(),
+        subject: contactForm.elements.subject.value.trim(),
+        message: contactForm.elements.message.value.trim()
+      };
+
+      function showSuccess() {
+        contactForm.classList.add('is-submitted');
+        var success = document.getElementById('contactSuccess');
+        if (success) success.classList.add('is-visible');
+      }
+
+      if (contactSubmitBtn) contactSubmitBtn.disabled = true;
+      fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      }).then(function (r) {
+        if (r.ok) { showSuccess(); return; }
+        if (r.status === 503) {
+          // Email backend not configured yet — fall back to the visitor's own mail client.
+          var to = currentContactEmail();
+          var body = encodeURIComponent(payload.message + '\n\n— ' + payload.name + ' (' + payload.email + ')');
+          window.location.href = 'mailto:' + to + '?subject=' + encodeURIComponent(payload.subject) + '&body=' + body;
+          showSuccess();
+          return;
+        }
+        alert('Something went wrong sending your message. Please email us directly at ' + currentContactEmail() + '.');
+      }).catch(function () {
+        alert('Something went wrong sending your message. Please email us directly at ' + currentContactEmail() + '.');
+      }).then(function () {
+        if (contactSubmitBtn) contactSubmitBtn.disabled = false;
+      });
     });
   }
 
@@ -106,6 +145,21 @@
       } else {
         el.textContent = value;
       }
+      // The Contact page email link's href always tracks its displayed address,
+      // so editing the text can never leave a stale mailto: link behind.
+      if (key === 'contact.email') {
+        var mailLink = el.closest('a');
+        if (mailLink) mailLink.setAttribute('href', 'mailto:' + value);
+      }
+    });
+  }
+
+  // Arbitrary link URLs (Instagram, LinkedIn, …) that aren't tied to visible text —
+  // stored alongside strings in content.strings, applied to any <a data-cms-href="key">.
+  function applyHrefValue(key, value) {
+    if (!value) return;
+    document.querySelectorAll('[data-cms-href="' + key + '"]').forEach(function (el) {
+      el.setAttribute('href', value);
     });
   }
 
@@ -131,7 +185,7 @@
 
   function applyContent(content) {
     if (!content) return;
-    Object.keys(content.strings || {}).forEach(function (k) { applyStringValue(k, content.strings[k]); });
+    Object.keys(content.strings || {}).forEach(function (k) { applyStringValue(k, content.strings[k]); applyHrefValue(k, content.strings[k]); });
     Object.keys(content.images || {}).forEach(function (k) { applyImageValue(k, content.images[k]); });
     Object.keys(content.colors || {}).forEach(function (k) { applyColorValue(k, content.colors[k]); });
     renderAllZones();
@@ -462,6 +516,10 @@
     document.querySelectorAll('[data-cms="' + key + '"]').forEach(function (other) {
       if (other !== el) applyStringValue(key, value);
     });
+    if (key === 'contact.email') {
+      var mailLink = el.closest('a');
+      if (mailLink) mailLink.setAttribute('href', 'mailto:' + value);
+    }
     markDirty();
   });
 
@@ -520,6 +578,21 @@
       ensureFileInput().click();
       return;
     }
+    var hrefTarget = e.target.closest && e.target.closest('a[data-cms-href]');
+    if (hrefTarget) {
+      e.preventDefault();
+      e.stopPropagation();
+      var hrefKey = hrefTarget.getAttribute('data-cms-href');
+      var current = editState.content.strings[hrefKey] || hrefTarget.getAttribute('href') || '';
+      var next = prompt('Edit link URL:', current === '#' ? 'https://' : current);
+      if (next !== null && next.trim()) {
+        editState.content.strings[hrefKey] = next.trim();
+        applyHrefValue(hrefKey, next.trim());
+        markDirty();
+      }
+      return;
+    }
+
     var link = e.target.closest && e.target.closest('a');
     if (link) e.preventDefault();
   }, true);
@@ -527,11 +600,12 @@
   fetch('/api/content', { cache: 'no-store' })
     .then(function (r) { return r.ok ? r.json() : null; })
     .then(function (content) {
-      applyContent(content);
       editState.content = deepClone(content) || {};
       editState.content.strings = editState.content.strings || {};
       editState.content.images = editState.content.images || {};
       editState.content.colors = editState.content.colors || {};
+      editState.content.blocks = editState.content.blocks || {};
+      applyContent(content);
       return apiCall('/api/admin/me');
     })
     .then(function (meRes) {

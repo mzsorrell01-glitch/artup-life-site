@@ -1,3 +1,5 @@
 .vercel
 .env*
 node_modules
+.claude/launch.json
+.claude/static-server.js
