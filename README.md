@@ -71,14 +71,20 @@ falls back to opening the visitor's own mail client via `mailto:`.
 `main` is the production branch and is connected to Vercel, so **pushing to `main`
 deploys to artup.life automatically.**
 
-> **Important:** Vercel blocks deployments whose git commit author isn't a member of
-> the Vercel team. Commit as `dev@artup.life`, or the deploy will fail with
-> "the commit author doesn't have permission to create deployments for this project"
-> — which presents as a deploy that silently never goes live.
+> **Important:** Vercel resolves each commit's author email to a GitHub account, then
+> checks that account belongs to a Vercel team member. If it can't, the deploy is
+> blocked — and a blocked deploy looks like one that simply never goes live.
+>
+> Commit with an email GitHub recognises for an account linked to the Vercel team:
 >
 > ```bash
-> git config user.email "dev@artup.life"
+> git config user.email "mzsorrell01-glitch@users.noreply.github.com"
 > ```
+>
+> Two ways this breaks: an email GitHub doesn't recognise at all ("Vercel couldn't
+> find a Git account for the commit author"), or a recognised GitHub account that
+> isn't linked to a team member ("the commit author doesn't have permission"). The
+> link lives at vercel.com/account/login-connections.
 
 To deploy manually instead: `vercel deploy --prod`.
 
