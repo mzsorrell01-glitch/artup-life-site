@@ -23,6 +23,12 @@ html { -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
   * { animation-duration: .001ms !important; transition-duration: .001ms !important; }
 }
 
+/* CMS-managed images stay hidden until script.js knows which src actually wins
+   (a preloaded override, or the shipped default) — see applyImageValue / revealDefaultImages
+   in script.js. Prevents the old/default image flashing before the real one is ready. */
+img[data-cms] { opacity: 0; transition: opacity 200ms ease; }
+img[data-cms].cms-visible { opacity: 1; }
+
 body {
   margin: 0;
   background: var(--ivory);

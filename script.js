@@ -163,18 +163,35 @@
     });
   }
 
+  // <img data-cms> elements start hidden (see .cms-loading / .cms-visible in style.css) so the
+  // hardcoded default markup never flashes before the real CMS image is known. Whichever image
+  // wins — a preloaded CMS override, or the default when there's no override — fades in once
+  // it's actually ready, instead of popping in over whatever the HTML shipped with.
   function applyImageValue(key, value) {
-    if (!value) return;
     document.querySelectorAll('[data-cms="' + key + '"]').forEach(function (el) {
-      if (el.tagName === 'IMG') {
-        el.src = value;
-      } else {
+      if (el.tagName !== 'IMG') {
+        if (!value) return;
         el.style.backgroundImage = 'url(' + value + ')';
         el.style.backgroundSize = 'cover';
         el.style.backgroundPosition = 'center';
         var label = el.querySelector('span');
         if (label) label.style.display = 'none';
+        return;
       }
+      if (!value) return; // no override for this key — the reveal sweep below shows the default as-is
+      el.classList.add('cms-loading');
+      var preload = new Image();
+      preload.onload = function () { el.src = value; el.classList.remove('cms-loading'); el.classList.add('cms-visible'); };
+      preload.onerror = function () { el.classList.remove('cms-loading'); el.classList.add('cms-visible'); };
+      preload.src = value;
+    });
+  }
+
+  // Reveals every <img data-cms> that isn't mid-preload — i.e. images with no CMS override,
+  // or every image at all if the content fetch failed outright.
+  function revealDefaultImages() {
+    document.querySelectorAll('img[data-cms]:not(.cms-loading)').forEach(function (el) {
+      el.classList.add('cms-visible');
     });
   }
 
@@ -597,6 +614,10 @@
     if (link) e.preventDefault();
   }, true);
 
+  // Absolute fallback: if the content fetch hangs instead of failing outright, never leave
+  // images hidden indefinitely.
+  setTimeout(revealDefaultImages, 2500);
+
   fetch('/api/content', { cache: 'no-store' })
     .then(function (r) { return r.ok ? r.json() : null; })
     .then(function (content) {
@@ -606,6 +627,7 @@
       editState.content.colors = editState.content.colors || {};
       editState.content.blocks = editState.content.blocks || {};
       applyContent(content);
+      revealDefaultImages();
       return apiCall('/api/admin/me');
     })
     .then(function (meRes) {
@@ -614,5 +636,8 @@
         renderSigninPill(meRes.data.username);
       }
     })
-    .catch(function () { /* offline, not logged in, or not yet configured — hardcoded content stands */ });
+    .catch(function () {
+      // offline, not logged in, or not yet configured — hardcoded content stands, just make it visible
+      revealDefaultImages();
+    });
 })();
