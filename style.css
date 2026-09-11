@@ -507,6 +507,56 @@ form.is-submitted { display: none; }
 .cms-color-popover input[type="color"] { width: 36px; height: 36px; border: 1px solid var(--hairline-light); border-radius: 2px; padding: 2px; background: #fff; cursor: pointer; }
 .cms-color-popover .cms-color-label { font-family: var(--sans); font-size: 12.5px; color: var(--black); }
 
+/* ---------- formatting toolbar (floats above the field being edited) ---------- */
+
+.cms-toolbar {
+  position: fixed; top: 0; left: 0; z-index: 210;
+  display: none; align-items: center; flex-wrap: wrap; gap: 3px;
+  max-width: calc(100vw - 16px);
+  background: rgba(7, 7, 7, .97); color: var(--ivory);
+  border-radius: 5px; padding: 5px 6px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, .38);
+  font-family: var(--sans);
+}
+.cms-toolbar button {
+  font: inherit; font-size: 13.5px; line-height: 1;
+  min-width: 30px; height: 30px; padding: 0 7px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: transparent; color: var(--ivory);
+  border: 0; border-radius: 3px; cursor: pointer;
+}
+.cms-toolbar button:hover { background: rgba(255, 253, 249, .15); }
+.cms-toolbar button.is-on { background: var(--gold); color: var(--black); }
+.cms-toolbar button sub { font-size: 9px; }
+.cms-toolbar select {
+  font: inherit; font-size: 12px; height: 30px; padding: 0 4px;
+  background: rgba(255, 253, 249, .09); color: var(--ivory);
+  border: 1px solid rgba(255, 253, 249, .22); border-radius: 3px; cursor: pointer;
+}
+.cms-toolbar select:hover { border-color: var(--gold); }
+.cms-toolbar select option { color: #070707; background: #fff; }
+.cms-toolbar .cms-tb-sep { width: 1px; height: 20px; margin: 0 3px; background: rgba(255, 253, 249, .22); }
+
+.cms-tb-color {
+  position: relative; width: 30px; height: 30px; border-radius: 3px; cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; font-size: 13.5px;
+}
+.cms-tb-color:hover { background: rgba(255, 253, 249, .15); }
+.cms-tb-color .cms-tb-a { line-height: 1; transform: translateY(-2px); }
+.cms-tb-color .cms-tb-swatch {
+  position: absolute; left: 6px; right: 6px; bottom: 5px; height: 3px;
+  border-radius: 2px; background: var(--gold);
+}
+/* The native swatch is invisible; the A + underline above stands in for it. */
+.cms-tb-color input[type="color"] {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  opacity: 0; border: 0; padding: 0; cursor: pointer;
+}
+
+@media (max-width: 640px) {
+  .cms-toolbar { left: 8px !important; right: 8px; max-width: none; }
+}
+
 /* ---------- freeform admin-added blocks (data-cms-zone) ---------- */
 
 [data-cms-zone] { display: block; }
