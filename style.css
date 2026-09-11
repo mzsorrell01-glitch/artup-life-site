@@ -433,6 +433,11 @@ form.is-submitted { display: none; }
 .site-footer { background: var(--black); color: rgba(255,253,249,.72); }
 .site-footer__inner { max-width: 1600px; margin: 0 auto; padding: 64px 56px 32px; display: flex; justify-content: space-between; gap: 40px; flex-wrap: wrap; }
 .site-footer .logo-word__artup { color: var(--ivory); }
+/* The footer sits on near-black and the brand mark is black line art, so it would
+   otherwise be invisible here — and invisible means an admin can't click it to swap the
+   logo. brightness(0) flattens whatever is uploaded to solid black, invert(1) turns that
+   white, so any future logo stays legible without needing a separate light variant. */
+.site-footer .logo img { filter: brightness(0) invert(1); }
 .site-footer nav { display: flex; gap: 28px; flex-wrap: wrap; font-size: 13px; }
 .site-footer nav a:hover { color: var(--gold); }
 .site-footer__bottom { border-top: 1px solid var(--hairline-dark); padding: 20px 56px; font-size: 12px; letter-spacing: .06em; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }

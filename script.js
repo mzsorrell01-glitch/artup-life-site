@@ -57,7 +57,7 @@
   // if the email backend isn't configured yet (see api/contact.js) ----
   function currentContactEmail() {
     var el = document.querySelector('[data-cms="contact.email"]');
-    return (el && el.textContent.trim()) || 'hello@artup.life';
+    return (el && el.textContent.trim()) || 'info@artup.life';
   }
 
   var contactForm = document.getElementById('contactForm');
@@ -684,42 +684,92 @@
     parent.removeChild(node);
   }
 
-  // Drops <span>s that no longer carry any styling, then re-joins split text nodes.
+  // Drops <span>s that no longer carry any styling, merges neighbours that carry exactly
+  // the same one, then re-joins split text nodes.
   function tidyMarkup(root) {
     Array.prototype.slice.call(root.querySelectorAll('span')).forEach(function (span) {
       if (!span.getAttribute('style')) unwrapNode(span);
     });
     Array.prototype.slice.call(root.querySelectorAll('font')).forEach(unwrapNode);
+    Array.prototype.slice.call(root.querySelectorAll('span')).forEach(function (span) {
+      var prev = span.previousSibling;
+      if (!prev || prev.nodeName !== 'SPAN') return;
+      if (prev.getAttribute('style') !== span.getAttribute('style')) return;
+      while (span.firstChild) prev.appendChild(span.firstChild);
+      span.parentNode.removeChild(span);
+    });
     root.normalize();
   }
 
-  // Moves `prop` off wrapper spans and onto their children. Without this, clearing a
-  // property on part of a selection can't win against an ancestor that still sets it.
-  function pushDownStyle(root, prop) {
-    Array.prototype.slice.call(root.querySelectorAll('span[style]')).forEach(function (span) {
-      var val = span.style.getPropertyValue(prop);
-      if (!val || !span.querySelector('*')) return;
-      span.style.removeProperty(prop);
-      Array.prototype.slice.call(span.childNodes).forEach(function (child) {
-        if (child.nodeType === 3) {
-          if (!/\S/.test(child.nodeValue)) return;
-          var wrap = document.createElement('span');
-          wrap.style.setProperty(prop, val);
-          span.insertBefore(wrap, child);
-          wrap.appendChild(child);
-        } else if (child.nodeType === 1 && child.style && !child.style.getPropertyValue(prop)) {
-          child.style.setProperty(prop, val);
-        }
-      });
-      if (!span.getAttribute('style')) unwrapNode(span);
+  // Splits `parent` so that everything before `child` moves into a copy of it.
+  function splitBefore(parent, child) {
+    if (parent.firstChild === child) return;
+    var clone = parent.cloneNode(false);
+    while (parent.firstChild !== child) clone.appendChild(parent.firstChild);
+    parent.parentNode.insertBefore(clone, parent);
+  }
+
+  // …and everything after `child` into a copy placed behind it.
+  function splitAfter(parent, child) {
+    if (parent.lastChild === child) return;
+    var clone = parent.cloneNode(false);
+    while (child.nextSibling) clone.appendChild(child.nextSibling);
+    parent.parentNode.insertBefore(clone, parent.nextSibling);
+  }
+
+  // Isolates `node` from every ancestor up to `root` that sets `prop` — splitting each one
+  // around it — and clears the property there. Without this, clearing a property on part of
+  // a formatted run does nothing, because the ancestor keeps winning.
+  function clearPropFromAncestors(node, prop, root) {
+    var current = node;
+    var parent = current.parentNode;
+    while (parent && parent !== root && parent.nodeType === 1) {
+      var grandparent = parent.parentNode;
+      if (parent.style && parent.style.getPropertyValue(prop)) {
+        splitBefore(parent, current);
+        splitAfter(parent, current);
+        parent.style.removeProperty(prop);
+      }
+      current = parent;
+      parent = grandparent;
+    }
+  }
+
+  // Wraps exactly the characters the selection covers in spans of their own, splitting the
+  // boundary text nodes first. This is deliberately not execCommand's job: execCommand
+  // ('fontSize') strips any font size already inside the range, so setting a colour through
+  // it would quietly undo a size chosen a moment earlier.
+  function wrapSelectionInSpans(range, root) {
+    if (range.collapsed) return [];
+    var startNode = range.startContainer;
+    if (startNode.nodeType === 3 && range.startOffset > 0 && range.startOffset < startNode.nodeValue.length) {
+      startNode.splitText(range.startOffset); // live ranges follow the split on their own
+    }
+    var endNode = range.endContainer;
+    if (endNode.nodeType === 3 && range.endOffset > 0 && range.endOffset < endNode.nodeValue.length) {
+      endNode.splitText(range.endOffset);
+    }
+    var covered = [];
+    var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+    var node;
+    while ((node = walker.nextNode())) {
+      if (!node.nodeValue.length) continue;
+      try {
+        // Boundary points count as inside, so a node that merely touches an edge of the
+        // selection without sharing a character fails one of these two tests.
+        if (range.comparePoint(node, 0) >= 0 && range.comparePoint(node, node.nodeValue.length) <= 0) covered.push(node);
+      } catch (e) { /* node outside the range's tree */ }
+    }
+    return covered.map(function (textNode) {
+      var span = document.createElement('span');
+      textNode.parentNode.insertBefore(span, textNode);
+      span.appendChild(textNode);
+      return span;
     });
   }
 
-  // Applies (or clears, when `value` is empty) one inline CSS property across the selection.
-  // execCommand('fontSize', 7) is used purely as a splitter: it wraps exactly the selected
-  // range in <font size="7">, which we then convert into the span we actually want.
-  // With no selection there is nothing for a size/font/colour dropdown to act on, and a
-  // caret-only execCommand would only arm a pending style. Treat it as "the whole field".
+  // With no selection there is nothing for a size/font/colour dropdown to act on, so treat
+  // an empty selection as "the whole field".
   function selectWholeIfCollapsed(el) {
     var sel = window.getSelection();
     if (sel && sel.rangeCount && !sel.getRangeAt(0).collapsed) return;
@@ -730,35 +780,20 @@
     savedRange = all.cloneRange();
   }
 
+  // Applies — or, with an empty `value`, clears — one inline CSS property across the selection.
   function applyInlineStyle(prop, value) {
     var el = activeEditable();
     if (!el) return;
     if (!restoreSelection()) return;
     selectWholeIfCollapsed(el);
-    if (!value) pushDownStyle(el, prop);
-    try { document.execCommand('styleWithCSS', false, false); } catch (e) {}
-    document.execCommand('fontSize', false, '7');
+    var sel = window.getSelection();
+    if (!sel.rangeCount) return;
 
-    var wrappers = [];
-    Array.prototype.slice.call(el.querySelectorAll('font[size="7"]')).forEach(function (font) {
-      var span = document.createElement('span');
-      var face = font.getAttribute('face');
-      var color = font.getAttribute('color');
-      if (face) span.style.fontFamily = face;
-      if (color) span.style.color = color;
-      while (font.firstChild) span.appendChild(font.firstChild);
-      font.parentNode.replaceChild(span, font);
-      wrappers.push(span);
-    });
-
+    var wrappers = wrapSelectionInSpans(sel.getRangeAt(0), el);
     wrappers.forEach(function (span) {
-      Array.prototype.slice.call(span.querySelectorAll('*')).forEach(function (child) {
-        if (child.style) child.style.removeProperty(prop);
-      });
       if (value) span.style.setProperty(prop, value);
-      else span.style.removeProperty(prop);
+      else clearPropFromAncestors(span, prop, el);
     });
-
     tidyMarkup(el);
 
     var alive = wrappers.filter(function (span) { return span.isConnected; });
@@ -766,7 +801,6 @@
       var range = document.createRange();
       range.setStartBefore(alive[0]);
       range.setEndAfter(alive[alive.length - 1]);
-      var sel = window.getSelection();
       sel.removeAllRanges();
       sel.addRange(range);
       savedRange = range.cloneRange();
@@ -813,18 +847,18 @@
     syncToolbarState();
   }
 
+  var CLEARABLE_PROPS = ['font-size', 'font-family', 'color', 'background-color', 'font-weight', 'font-style', 'text-decoration-line', 'letter-spacing', 'text-transform'];
+
   function clearFormatting() {
     var el = activeEditable();
     if (!el || !restoreSelection()) return;
     selectWholeIfCollapsed(el);
     document.execCommand('removeFormat');
     document.execCommand('unlink');
-    ['font-size', 'font-family', 'color', 'background-color', 'font-weight', 'font-style', 'letter-spacing', 'text-transform'].forEach(function (prop) {
-      pushDownStyle(el, prop);
-    });
+    rememberSelection();
+    CLEARABLE_PROPS.forEach(function (prop) { applyInlineStyle(prop, ''); });
     tidyMarkup(el);
     captureFromElement(el);
-    rememberSelection();
     syncToolbarState();
   }
 

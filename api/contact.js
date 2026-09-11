@@ -3,7 +3,7 @@
 // and CONTACT_FROM_EMAIL (a sender address on a domain verified with Resend)
 // to be set as env vars; until then, returns 503 and the client falls back
 // to a mailto: link (see script.js).
-const TO_EMAIL = process.env.CONTACT_TO_EMAIL || 'hello@artup.life';
+const TO_EMAIL = process.env.CONTACT_TO_EMAIL || 'info@artup.life';
 const FROM_EMAIL = process.env.CONTACT_FROM_EMAIL;
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 

@@ -61,7 +61,7 @@ Set in the Vercel project (all marked secret):
 | `BLOB_READ_WRITE_TOKEN` | Vercel Blob access for content + uploads |
 | `RESEND_API_KEY` | contact form email — **not yet set** |
 | `CONTACT_FROM_EMAIL` | verified sender address — **not yet set** |
-| `CONTACT_TO_EMAIL` | where contact form mail goes (defaults to `hello@artup.life`) |
+| `CONTACT_TO_EMAIL` | where contact form mail goes (defaults to `info@artup.life`) |
 
 Until the Resend variables are set, `/api/contact` returns 503 and the contact form
 falls back to opening the visitor's own mail client via `mailto:`.
