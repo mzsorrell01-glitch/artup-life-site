@@ -1,200 +1,127 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-CA">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Campus Canvas — ArtUp Life</title>
-<meta name="description" content="Your campus memories can help inspire original art. Submit, vote, earn — right in your browser.">
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital@1&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Libre+Caslon+Display&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+<title>Campus Canvas — ArtUp</title>
+<meta name="description" content="Campus Canvas is where Queen’s students share memories, explore submissions, and help ArtUp understand which moments matter most.">
+<link rel="canonical" href="https://artup.life/campus-canvas/">
+<meta name="theme-color" content="#0B0A09">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ArtUp">
+<meta property="og:title" content="Campus Canvas — ArtUp">
+<meta property="og:description" content="Campus Canvas is where Queen’s students share memories, explore submissions, and help ArtUp understand which moments matter most.">
+<meta property="og:url" content="https://artup.life/campus-canvas/">
+<meta property="og:image" content="https://artup.life/assets/home/room.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital@1&amp;family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&amp;family=Libre+Caslon+Display&amp;family=Jost:wght@300;400;500&amp;display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/site.css">
 <noscript><style>img[data-cms]{opacity:1!important;}</style></noscript>
 </head>
 <body>
-
+<a class="skip-link" href="#main">Skip to content</a>
 <header class="site-header">
   <div class="site-header__inner">
     <a href="/" class="logo">
-      <span class="logo-word"><span class="logo-word__artup" data-cms="brand.wordmarkArtup">ArtUp</span><span class="logo-word__life" data-cms="brand.wordmarkLife">LIFE</span></span>
+      <img src="/assets/brand/artup-mark.png" alt="ArtUp" width="640" height="367" data-cms="brand.logo">
+      <span class="logo-word"><span class="logo-word__life" data-cms="brand.wordmarkLife">LIFE</span></span>
     </a>
-    <nav class="nav">
-      <a href="/">Home</a>
-      <a href="/about/">About</a>
-      <a href="/collection/">Collection</a>
+    <nav class="nav" id="site-nav" aria-label="Primary">
       <a href="/how-it-works/">How It Works</a>
       <a href="/campus-canvas/">Campus Canvas</a>
-      <a href="/events/">Events</a>
-      <a href="/contact/">Contact</a>
+      <a href="/artists/">Artists</a>
+      <a href="/collection/">Graduation Collection</a>
+      <a href="/about/">About</a>
+      <a href="/apply/" class="nav-apply">Apply</a>
     </nav>
-    <button class="nav-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    <a href="/apply/" class="nav-apply nav-apply--bar">Apply</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
     </button>
   </div>
 </header>
 
-<main>
-  <section class="split" style="min-height:auto;">
-    <div class="split-panel">
-      <h1 class="h-display" data-cms="cc.headline" data-cms-rich>Campus<br>Canvas</h1>
-      <hr class="gold-rule">
-      <p class="lede" data-cms="cc.subhead">Your campus. Your memories. Your choice.</p>
-      <hr class="gold-rule">
-      <p class="body-copy" data-cms="cc.body">Campus Canvas is the ArtUP mobile experience that lets students help define the visual memories of their university experience. It is designed to be quick, intuitive and participation-forward.</p>
-      <p class="body-copy" data-cms="cc.note">Photo submissions and voting happen on your phone — scan the code below or tap the button to open Campus Canvas.</p>
-      <div class="cc-qr-block">
-        <img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&color=070707&bgcolor=FFFDF9&data=https%3A%2F%2Fcampus-canvas-app.vercel.app%2F" alt="QR code to open Campus Canvas on your phone" width="160" height="160" />
-        <div>
-          <p class="eyebrow" style="margin:0 0 6px;" data-cms="cc.qrLabel">Get the app</p>
-          <p class="body-copy" style="margin:0;" data-cms="cc.qrCaption">Scan with your phone's camera to open Campus Canvas instantly — no download needed.</p>
-        </div>
+<main id="main">
+<section class="page-hero on-dark" aria-labelledby="page-title">
+  <div class="feature">
+    <div>
+      <p class="eyebrow-label">Campus Canvas</p>
+      <h1 id="page-title" class="display-1 is-sentence" data-cms="canvas.headline">You lived it. You help shape it.</h1>
+      <p class="lead" data-cms="canvas.body">Campus Canvas is where Queen’s students share memories, explore submitted images, and help ArtUp understand which parts of university life feel most meaningful. Student choices guide the themes artists will see—they do not judge artistic quality.</p>
+      <div class="actions">
+        <a class="button button--gold" href="https://campus-canvas-app.vercel.app/" target="_blank" rel="noopener"><span data-cms="canvas.cta">Open Campus Canvas</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg><span class="visually-hidden"> (opens in a new tab)</span></a>
       </div>
-      <div style="margin-top:28px;">
-        <a href="https://campus-canvas-app.vercel.app/" target="_blank" rel="noopener" class="btn">
-          <span data-cms="cc.cta">Open Campus Canvas</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg>
-        </a>
-      </div>
-      <hr class="gold-rule">
-      <p class="body-copy" style="font-style:italic;" data-cms="cc.closing">Artists create. Participation competes.</p>
-    </div>
-
-    <div class="split-content">
-      <div class="phone-row">
-        <div class="phone">
-          <div class="phone__notch"></div>
-          <div class="phone__bar">
-            <span class="brand"><img src="/assets/monogram.png" alt=""> Campus Canvas</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="1.6"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
-          </div>
-          <div class="phone__screen">
-            <h4>Submit</h4>
-            <p class="hint">Share exactly three campus photographs.</p>
-            <div class="phone__thumbs">
-              <div class="art-placeholder-fill">campus photo</div>
-              <div class="art-placeholder-fill">campus photo</div>
-              <div class="art-placeholder-fill">campus photo</div>
-            </div>
-            <button class="phone__cta" type="button">Submit</button>
-          </div>
-        </div>
-
-        <div class="phone">
-          <div class="phone__notch"></div>
-          <div class="phone__bar">
-            <span class="brand"><img src="/assets/monogram.png" alt=""> Campus Canvas</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="1.6"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
-          </div>
-          <div class="phone__screen">
-            <h4>Vote</h4>
-            <p class="hint">Choose Like or Not Like.</p>
-            <div class="phone__vote-img"><div class="art-placeholder-fill">campus photo</div></div>
-            <div class="vote-buttons">
-              <button class="like" type="button" aria-label="Like"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.5-9.5-9C.7 8.4 2.4 5 6 5c2 0 3.5 1.2 4 2.5.5-1.3 2-2.5 4-2.5 3.6 0 5.3 3.4 3.5 7-2.5 4.5-9.5 9-9.5 9z"/></svg></button>
-              <button class="nope" type="button" aria-label="Not like"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
-            </div>
-            <p>Like &nbsp;·&nbsp; Not Like</p>
-          </div>
-        </div>
-
-        <div class="phone">
-          <div class="phone__notch"></div>
-          <div class="phone__bar">
-            <span class="brand"><img src="/assets/monogram.png" alt=""> Campus Canvas</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="1.6"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
-          </div>
-          <div class="phone__screen" style="text-align:center;">
-            <h4>Earn</h4>
-            <p class="hint">Complete voting rounds for raffle chances.</p>
-            <div class="earn-ring"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 12v9H4v-9M2 7h20v5H2zM12 22V7M12 7c-1 0-3-.5-3-2.5S10.5 2 12 4c1.5-2 3-1.5 3-1.5S16.5 6.5 12 7z"/></svg></div>
-            <p style="font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-muted); margin:0;">Round Progress</p>
-            <div class="round-dots"><span></span><span></span><span></span><span></span><span class="is-empty"></span></div>
-          </div>
-        </div>
+      <div class="qr">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=248x248&amp;margin=0&amp;color=0B0A09&amp;bgcolor=F6F0E6&amp;data=https%3A%2F%2Fcampus-canvas-app.vercel.app%2F" alt="QR code that opens Campus Canvas" width="124" height="124" loading="lazy">
+        <p data-cms="canvas.qrCaption">On a computer? Scan with your phone’s camera to open Campus Canvas there.</p>
       </div>
     </div>
-  </section>
+    <div class="feature__media">
+      <img src="/assets/photos/queens-theological-hall.jpg" alt="The carved wooden doors of Queen’s Theological Hall" width="1280" height="1600" data-cms="canvas.photo">
+    </div>
+  </div>
+</section>
 
-  <section class="cc-feature-row">
-    <div class="value-item">
-      <span class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="3" y="6" width="18" height="14" rx="2"/><circle cx="12" cy="13" r="4"/><path d="M8 6l1.5-2h5L16 6"/></svg></span>
-      <span><strong data-cms="cc.feature1.title">Submit</strong><br><span style="font-size:14px; color:var(--ink-muted);" data-cms="cc.feature1.body">Share exactly three campus photographs.</span></span>
+<section class="section" aria-labelledby="inside-title">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow-label">Inside Campus Canvas</p>
+      <h2 id="inside-title" class="display-2" data-cms="canvas.inside.heading">Three simple ways to take part.</h2>
     </div>
-    <div class="value-item">
-      <span class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 21s-7-4.5-9.5-9C.7 8.4 2.4 5 6 5c2 0 3.5 1.2 4 2.5.5-1.3 2-2.5 4-2.5 3.6 0 5.3 3.4 3.5 7-2.5 4.5-9.5 9-9.5 9z"/></svg></span>
-      <span><strong data-cms="cc.feature2.title">Vote</strong><br><span style="font-size:14px; color:var(--ink-muted);" data-cms="cc.feature2.body">Choose Like or Not Like.</span></span>
-    </div>
-    <div class="value-item">
-      <span class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M20 12v9H4v-9M2 7h20v5H2zM12 22V7"/></svg></span>
-      <span><strong data-cms="cc.feature3.title">Earn</strong><br><span style="font-size:14px; color:var(--ink-muted);" data-cms="cc.feature3.body">Complete voting rounds for raffle chances.</span></span>
-    </div>
-  </section>
+    <ol class="steps">
+      <li><h3 data-cms="canvas.inside.1.title">Share a memory</h3><p data-cms="canvas.inside.1.body">Submit a photograph and a few words about a place, person, or moment that shaped your time at Queen’s.</p></li>
+      <li><h3 data-cms="canvas.inside.2.title">Explore</h3><p data-cms="canvas.inside.2.body">Browse the memories other Queen’s students have shared.</p></li>
+      <li><h3 data-cms="canvas.inside.3.title">Show what resonates</h3><p data-cms="canvas.inside.3.body">Mark the memories that feel meaningful to you. There is no wrong answer.</p></li>
+    </ol>
+    <p class="callout" data-cms="canvas.inside.callout">Student choices guide the themes artists see. They don’t decide whether an artist—or an image—is good.</p>
+  </div>
+</section>
 
-  <section class="section-pad" style="border-top:1px solid var(--hairline-light);">
-    <div class="prose-block">
-      <h2 class="h-section" data-cms="cc.whatStudentsDo.headline">What students do</h2>
-      <hr class="gold-rule gold-rule--center">
+<section class="section section--alt" aria-labelledby="care-title">
+  <div class="wrap">
+    <div class="section-head">
+      <h2 id="care-title" class="display-2" data-cms="canvas.care.heading">Your memories, handled with care.</h2>
     </div>
-    <div class="diff-list">
-      <p data-cms="cc.whatStudentsDo.item1">Submit original photographs that capture elements of their university experience.</p>
-      <p data-cms="cc.whatStudentsDo.item2">Add a short explanation of why the image is meaningful to them.</p>
-      <p data-cms="cc.whatStudentsDo.item3">Browse selected student submissions on a phone.</p>
-      <p data-cms="cc.whatStudentsDo.item4">Signal if an image resonates with them using a simple voting action.</p>
-    </div>
-  </section>
-
-  <section class="section-pad" style="padding-top:0;">
-    <div class="prose-block">
-      <h2 class="h-section" data-cms="cc.why.headline">Why Campus Canvas exists</h2>
-      <hr class="gold-rule gold-rule--center">
-      <p class="body-copy" data-cms="cc.why.body1">Most university art and memorabilia is chosen by institutions, marketers or vendors. Campus Canvas reverses that process. Students create the source material and students help validate what feels authentic.</p>
-      <p class="body-copy" data-cms="cc.why.body2">The result is a continuously improving library of visual memories that ArtUP applies to publish posters, prints, limited editions and, ultimately, premium artist-curated originals for graduation and alumni gifting.</p>
-    </div>
-  </section>
-
-  <section class="section-pad" style="padding-top:0;">
-    <div class="prose-block">
-      <h2 class="h-section" data-cms="cc.simple.headline">Simple by design</h2>
-      <hr class="gold-rule gold-rule--center">
-      <p class="body-copy" data-cms="cc.simple.body">The voting experience is simple. Students move through selected images and indicate whether each one resonates with them. ArtUP uses the combined preference data to understand which subjects have the strongest connection across the student community.</p>
-    </div>
-  </section>
-
-  <section class="section-pad" style="padding-top:0;">
-    <div class="prose-block">
-      <h2 class="h-section" data-cms="cc.fromPhone.headline">From a phone pic to fine curated art</h2>
-      <hr class="gold-rule gold-rule--center">
-      <p class="body-copy" data-cms="cc.fromPhone.body">A photograph does not need to be technically perfect to matter. It needs to capture something real. Campus Canvas helps ArtUP identify those real moments at scale. The strongest images can then move from student memory to artist interpretation — preserving the emotional connection while creating something new.</p>
-    </div>
-  </section>
-
-  <section class="section-pad" style="padding-top:0; text-align:center; border-top:1px solid var(--hairline-light);">
-    <p class="eyebrow" data-cms="cc.promise.label">The Campus Canvas promise</p>
-    <p class="h-section" style="font-style:italic; max-width:700px; margin:0 auto;" data-cms="cc.promise.quote">"The art should begin with the university experience as students actually lived it"</p>
-  </section>
+    <ul class="trust">
+        <li data-cms="canvas.trust1">Every submission is reviewed by the ArtUp team before it appears in Campus Canvas.</li>
+        <li data-cms="canvas.trust2">You keep the copyright to the photographs you share.</li>
+        <li data-cms="canvas.trust3">Campus Canvas shows its terms — including how ArtUp may use submitted photographs and stories — before you submit anything.</li>
+      </ul>
+    <div class="actions"><a class="text-link" href="/contact/">Questions? Contact us</a></div>
+  </div>
+</section>
 </main>
 
 <footer class="site-footer">
   <div class="site-footer__inner">
-    <div class="logo">
-      <img src="/assets/monogram.png" alt="ArtUp Life" data-cms="header.logo" style="height:34px;" />
-      <span class="logo-word"><span class="logo-word__artup" data-cms="brand.wordmarkArtup">ArtUp</span><span class="logo-word__life" data-cms="brand.wordmarkLife">LIFE</span></span>
+    <div class="footer-brand">
+      <a href="/" class="logo">
+        <img src="/assets/brand/artup-mark.png" alt="ArtUp" width="640" height="367" data-cms="brand.logo">
+        <span class="logo-word"><span class="logo-word__life" data-cms="brand.wordmarkLife">LIFE</span></span>
+      </a>
+      <p data-cms="footer.tagline">Student-validated. Artist-interpreted. Made in Kingston.</p>
     </div>
-    <nav>
-      <a href="/about/">About</a>
-      <a href="/collection/">Collection</a>
+    <nav aria-label="Footer">
       <a href="/how-it-works/">How It Works</a>
       <a href="/campus-canvas/">Campus Canvas</a>
+      <a href="/artists/">Artists</a>
+      <a href="/collection/">Graduation Collection</a>
+      <a href="/about/">About</a>
+      <a href="/apply/">Apply</a>
       <a href="/events/">Events</a>
       <a href="/contact/">Contact</a>
     </nav>
   </div>
   <div class="site-footer__bottom">
-    <span>&copy; 2026 ArtUp Life</span>
+    <span>&copy; 2026 ArtUp</span>
     <span>Kingston, Ontario</span>
   </div>
 </footer>
 
 <script src="/script.js"></script>
+<script src="/site.js"></script>
 </body>
 </html>

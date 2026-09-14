@@ -1,39 +1,50 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-CA">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Events — ArtUp Life</title>
-<meta name="description" content="Where to see ArtUp — meet the artists, experience the collection and take part in Campus Canvas.">
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital@1&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Libre+Caslon+Display&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+<title>Events — ArtUp</title>
+<meta name="description" content="Where to meet ArtUp, see the process, and take part in Campus Canvas in Kingston.">
+<link rel="canonical" href="https://artup.life/events/">
+<meta name="theme-color" content="#0B0A09">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ArtUp">
+<meta property="og:title" content="Events — ArtUp">
+<meta property="og:description" content="Where to meet ArtUp, see the process, and take part in Campus Canvas in Kingston.">
+<meta property="og:url" content="https://artup.life/events/">
+<meta property="og:image" content="https://artup.life/assets/home/room.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital@1&amp;family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&amp;family=Libre+Caslon+Display&amp;family=Jost:wght@300;400;500&amp;display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/site.css">
 <noscript><style>img[data-cms]{opacity:1!important;}</style></noscript>
 </head>
 <body>
-
+<a class="skip-link" href="#main">Skip to content</a>
 <header class="site-header">
   <div class="site-header__inner">
     <a href="/" class="logo">
-      <span class="logo-word"><span class="logo-word__artup" data-cms="brand.wordmarkArtup">ArtUp</span><span class="logo-word__life" data-cms="brand.wordmarkLife">LIFE</span></span>
+      <img src="/assets/brand/artup-mark.png" alt="ArtUp" width="640" height="367" data-cms="brand.logo">
+      <span class="logo-word"><span class="logo-word__life" data-cms="brand.wordmarkLife">LIFE</span></span>
     </a>
-    <nav class="nav">
-      <a href="/">Home</a>
-      <a href="/about/">About</a>
-      <a href="/collection/">Collection</a>
+    <nav class="nav" id="site-nav" aria-label="Primary">
       <a href="/how-it-works/">How It Works</a>
       <a href="/campus-canvas/">Campus Canvas</a>
-      <a href="/events/">Events</a>
-      <a href="/contact/">Contact</a>
+      <a href="/artists/">Artists</a>
+      <a href="/collection/">Graduation Collection</a>
+      <a href="/about/">About</a>
+      <a href="/apply/" class="nav-apply">Apply</a>
     </nav>
-    <button class="nav-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    <a href="/apply/" class="nav-apply nav-apply--bar">Apply</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
     </button>
   </div>
 </header>
 
-<main>
+<main id="main">
   <section class="split" style="min-height:auto;">
     <div class="split-panel" style="background:var(--black); position:relative; padding:88px 56px;">
       <div style="position:relative; z-index:1;">
@@ -92,26 +103,32 @@
 
 <footer class="site-footer">
   <div class="site-footer__inner">
-    <div class="logo">
-      <img src="/assets/monogram.png" alt="ArtUp Life" data-cms="header.logo" style="height:34px;" />
-      <span class="logo-word"><span class="logo-word__artup" data-cms="brand.wordmarkArtup">ArtUp</span><span class="logo-word__life" data-cms="brand.wordmarkLife">LIFE</span></span>
+    <div class="footer-brand">
+      <a href="/" class="logo">
+        <img src="/assets/brand/artup-mark.png" alt="ArtUp" width="640" height="367" data-cms="brand.logo">
+        <span class="logo-word"><span class="logo-word__life" data-cms="brand.wordmarkLife">LIFE</span></span>
+      </a>
+      <p data-cms="footer.tagline">Student-validated. Artist-interpreted. Made in Kingston.</p>
     </div>
-    <nav>
-      <a href="/about/">About</a>
-      <a href="/collection/">Collection</a>
+    <nav aria-label="Footer">
       <a href="/how-it-works/">How It Works</a>
       <a href="/campus-canvas/">Campus Canvas</a>
+      <a href="/artists/">Artists</a>
+      <a href="/collection/">Graduation Collection</a>
+      <a href="/about/">About</a>
+      <a href="/apply/">Apply</a>
       <a href="/events/">Events</a>
       <a href="/contact/">Contact</a>
     </nav>
   </div>
   <div class="site-footer__bottom">
-    <span>&copy; 2026 ArtUp Life</span>
+    <span>&copy; 2026 ArtUp</span>
     <span>Kingston, Ontario</span>
   </div>
 </footer>
 
 <script src="/script.js"></script>
+<script src="/site.js"></script>
 <script>
   document.querySelectorAll('[data-action="demo"]').forEach(function (btn) {
     btn.addEventListener('click', function () {

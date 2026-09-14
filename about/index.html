@@ -1,92 +1,124 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-CA">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>About Us — ArtUp Life</title>
-<meta name="description" content="ArtUP Life transforms the memories that define the university experience into art that inspires a lifestyle of continued success.">
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital@1&family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&family=Libre+Caslon+Display&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+<title>About — ArtUp</title>
+<meta name="description" content="Why ArtUp preserves the university experience through original local art, starting with Queen’s University and Kingston.">
+<link rel="canonical" href="https://artup.life/about/">
+<meta name="theme-color" content="#0B0A09">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="ArtUp">
+<meta property="og:title" content="About — ArtUp">
+<meta property="og:description" content="Why ArtUp preserves the university experience through original local art, starting with Queen’s University and Kingston.">
+<meta property="og:url" content="https://artup.life/about/">
+<meta property="og:image" content="https://artup.life/assets/home/room.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital@1&amp;family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;1,6..96,400&amp;family=Libre+Caslon+Display&amp;family=Jost:wght@300;400;500&amp;display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/site.css">
 <noscript><style>img[data-cms]{opacity:1!important;}</style></noscript>
 </head>
 <body>
-
+<a class="skip-link" href="#main">Skip to content</a>
 <header class="site-header">
   <div class="site-header__inner">
     <a href="/" class="logo">
-      <span class="logo-word"><span class="logo-word__artup" data-cms="brand.wordmarkArtup">ArtUp</span><span class="logo-word__life" data-cms="brand.wordmarkLife">LIFE</span></span>
+      <img src="/assets/brand/artup-mark.png" alt="ArtUp" width="640" height="367" data-cms="brand.logo">
+      <span class="logo-word"><span class="logo-word__life" data-cms="brand.wordmarkLife">LIFE</span></span>
     </a>
-    <nav class="nav">
-      <a href="/">Home</a>
-      <a href="/about/">About</a>
-      <a href="/collection/">Collection</a>
+    <nav class="nav" id="site-nav" aria-label="Primary">
       <a href="/how-it-works/">How It Works</a>
       <a href="/campus-canvas/">Campus Canvas</a>
-      <a href="/events/">Events</a>
-      <a href="/contact/">Contact</a>
+      <a href="/artists/">Artists</a>
+      <a href="/collection/">Graduation Collection</a>
+      <a href="/about/">About</a>
+      <a href="/apply/" class="nav-apply">Apply</a>
     </nav>
-    <button class="nav-toggle" type="button" aria-label="Toggle menu" aria-expanded="false">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    <a href="/apply/" class="nav-apply nav-apply--bar">Apply</a>
+    <button class="nav-toggle" type="button" aria-label="Menu" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
     </button>
   </div>
 </header>
 
-<main>
-  <section class="split" style="min-height:auto;">
-    <div class="split-panel">
-      <p class="eyebrow" data-cms="about.eyebrow">About ArtUP Life</p>
-      <h1 class="h-page" data-cms="about.headline">About Us</h1>
-      <hr class="gold-rule">
-      <p class="body-copy" data-cms="about.intro">ArtUP Life transforms the memories that define the university experience into art that Inspires a lifestyle of continued success. We invite students to share and help select the places, moments and experiences that matter most, then work with artists to interpret those memories as distinctive original art pieces. The result is more than a graduation gift—it's an heirloom of the university experience, created to preserve where you've been and inspire where you're going.</p>
+<main id="main">
+<section class="page-hero on-dark" aria-labelledby="page-title">
+  <div class="wrap">
+    <p class="eyebrow-label">About ArtUp</p>
+    <h1 id="page-title" class="display-1 is-sentence" data-cms="aboutStory.headline">Some achievements deserve a reminder you can live with.</h1>
+    <p class="lead" data-cms="aboutStory.body1">Graduation marks years of growth, friendship, challenge, and possibility. ArtUp exists to preserve that experience through original local art—not as a generic campus souvenir, but as a meaningful work connected to memories students recognize as their own.</p>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="chapter-title">
+  <div class="feature">
+    <div class="feature__media">
+      <img src="/assets/photos/lakeshore-evening.jpg" alt="Two friends sitting under the trees by Lake Ontario at dusk" width="1280" height="1600" loading="lazy" data-cms="aboutStory.photo">
     </div>
-    <div class="split-content--pad" style="background:var(--ivory); padding:80px 56px;">
-      <h2 class="h-section" data-cms="about.teamHeading">Co-Founders</h2>
-      <hr class="gold-rule">
+    <div>
+      <p class="eyebrow-label">The Queen’s × Kingston pilot</p>
+      <h2 id="chapter-title" class="display-2" data-cms="aboutStory.chapterHeading">The first chapter.</h2>
+      <p class="copy" data-cms="aboutStory.body2">Queen’s University and Kingston are the first chapter of a model designed to honour what makes every university community distinct.</p>
+      <div class="actions"><a class="text-link" href="/how-it-works/">How it works</a></div>
+    </div>
+  </div>
+</section>
 
-      <div style="display:grid; gap:40px; margin-top:8px;">
-        <div style="display:grid; grid-template-columns:96px 1fr; gap:24px; align-items:start;">
-          <div class="art-placeholder-fill" data-cms="about.marcusSorrell.portrait" style="aspect-ratio:1; border-radius:999px;">MS</div>
-          <div>
-            <p style="margin:0; font-family:var(--serif); font-size:20px;" data-cms="about.marcusSorrell.name">Marcus Sorrell</p>
-            <div data-cms-zone="about.marcusSorrell.extra"></div>
-          </div>
+<section class="section section--alt" aria-labelledby="founders-title">
+  <div class="wrap">
+    <div class="section-head">
+      <h2 id="founders-title" class="display-2" data-cms="about.teamHeading">Co-Founders</h2>
+    </div>
+    <div class="founders">
+      <div class="founder">
+        <div class="art-placeholder-fill" data-cms="about.marcusSorrell.portrait">MS</div>
+        <div>
+          <p class="founder__name" data-cms="about.marcusSorrell.name">Marcus Sorrell</p>
+          <div data-cms-zone="about.marcusSorrell.extra"></div>
         </div>
-
-        <div style="display:grid; grid-template-columns:96px 1fr; gap:24px; align-items:start;">
-          <div class="art-placeholder-fill" data-cms="about.johnSorrell.portrait" style="aspect-ratio:1; border-radius:999px;">JS</div>
-          <div>
-            <p style="margin:0; font-family:var(--serif); font-size:20px;" data-cms="about.johnSorrell.name">John Sorrell</p>
-            <div data-cms-zone="about.johnSorrell.extra"></div>
-          </div>
+      </div>
+      <div class="founder">
+        <div class="art-placeholder-fill" data-cms="about.johnSorrell.portrait">JS</div>
+        <div>
+          <p class="founder__name" data-cms="about.johnSorrell.name">John Sorrell</p>
+          <div data-cms-zone="about.johnSorrell.extra"></div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 </main>
 
 <footer class="site-footer">
   <div class="site-footer__inner">
-    <div class="logo">
-      <img src="/assets/monogram.png" alt="ArtUp Life" data-cms="header.logo" style="height:34px;" />
-      <span class="logo-word"><span class="logo-word__artup" data-cms="brand.wordmarkArtup">ArtUp</span><span class="logo-word__life" data-cms="brand.wordmarkLife">LIFE</span></span>
+    <div class="footer-brand">
+      <a href="/" class="logo">
+        <img src="/assets/brand/artup-mark.png" alt="ArtUp" width="640" height="367" data-cms="brand.logo">
+        <span class="logo-word"><span class="logo-word__life" data-cms="brand.wordmarkLife">LIFE</span></span>
+      </a>
+      <p data-cms="footer.tagline">Student-validated. Artist-interpreted. Made in Kingston.</p>
     </div>
-    <nav>
-      <a href="/about/">About</a>
-      <a href="/collection/">Collection</a>
+    <nav aria-label="Footer">
       <a href="/how-it-works/">How It Works</a>
       <a href="/campus-canvas/">Campus Canvas</a>
+      <a href="/artists/">Artists</a>
+      <a href="/collection/">Graduation Collection</a>
+      <a href="/about/">About</a>
+      <a href="/apply/">Apply</a>
       <a href="/events/">Events</a>
       <a href="/contact/">Contact</a>
     </nav>
   </div>
   <div class="site-footer__bottom">
-    <span>&copy; 2026 ArtUp Life</span>
+    <span>&copy; 2026 ArtUp</span>
     <span>Kingston, Ontario</span>
   </div>
 </footer>
 
 <script src="/script.js"></script>
+<script src="/site.js"></script>
 </body>
 </html>
