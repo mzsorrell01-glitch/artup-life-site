@@ -1,0 +1,7 @@
+{
+  "cleanUrls": false,
+  "rewrites": [
+    { "source": "/:slug([^./]+)", "destination": "/page/index.html" },
+    { "source": "/:slug([^./]+)/", "destination": "/page/index.html" }
+  ]
+}

@@ -370,6 +370,12 @@
     Object.keys(content.colors || {}).forEach(function (k) { applyColorValue(k, content.colors[k]); });
     Object.keys(content.styles || {}).forEach(function (k) { applyElementStyles(k); });
     renderAllZones();
+    renderAllLists();
+    injectCustomNavLinks();
+    applyPageVisibility();
+    applyAllSplitRatios();
+    renderCustomPage();
+    guardHiddenPage();
   }
 
   // ---- freeform blocks (admin-added text/photo blocks in a `data-cms-zone`) ----
@@ -439,6 +445,603 @@
     });
   }
 
+
+  // ---- repeatable card lists (data-cms-list) ----
+  // A container marked <section data-cms-list="collection.works"> is managed as a list of
+  // records rather than as free text: every card carries a photo, title, artist and price,
+  // and an admin can add or remove cards. Stored as
+  // content.lists[key] = [{ id, image, title, artist, price, href }, ...].
+  //
+  // Until an admin saves one, no list exists in storage and the cards that shipped in the
+  // HTML are left exactly as they are — so the public page is unchanged by this feature.
+
+  var LIST_TEXT_FIELDS = ['title', 'artist', 'price'];
+
+  function listItems(key) {
+    if (!editState.content) return [];
+    var lists = editState.content.lists || (editState.content.lists = {});
+    return lists[key] || (lists[key] = []);
+  }
+
+  function htmlToPlainText(value) {
+    var tmp = document.createElement('div');
+    tmp.innerHTML = valueToHtml(value, false);
+    return (tmp.textContent || '').trim();
+  }
+
+  // Reads the cards already in the markup so the first edit inherits the shipped content
+  // instead of starting from an empty grid.
+  function seedListFromMarkup(container, key) {
+    var seeded = [];
+    container.querySelectorAll('.work-card').forEach(function (card) {
+      var img = card.querySelector('img');
+      var titleEl = card.querySelector('h3');
+      var priceEls = card.querySelectorAll('.work-price');
+      var link = card.querySelector('a[href]');
+      seeded.push({
+        id: genBlockId(),
+        image: img ? img.getAttribute('src') : '',
+        title: titleEl ? titleEl.textContent.trim() : '',
+        artist: priceEls[0] ? priceEls[0].textContent.trim() : '',
+        price: priceEls[1] ? priceEls[1].textContent.trim() : '',
+        href: link ? link.getAttribute('href') : ''
+      });
+    });
+    editState.content.lists[key] = seeded;
+    return seeded;
+  }
+
+  function buildListCard(key, item, editing) {
+    var href = rtSafeHref(item.href) || '';
+    var card = document.createElement('div');
+    card.className = 'work-card cms-list-card';
+    card.setAttribute('data-list-key', key);
+    card.setAttribute('data-item-id', item.id);
+
+    // Outside edit mode the photo is the link to the artwork; inside it, clicking swaps it.
+    var photo = document.createElement(href && !editing ? 'a' : 'div');
+    if (href && !editing) photo.setAttribute('href', href);
+    photo.className = 'cms-list-photo';
+    if (item.image) {
+      var img = document.createElement('img');
+      img.src = item.image;
+      img.alt = htmlToPlainText(item.title);
+      img.classList.add('cms-visible');
+      photo.appendChild(img);
+    } else {
+      var empty = document.createElement('div');
+      empty.className = 'cms-block-image-empty cms-list-photo-empty';
+      empty.textContent = editing ? 'Click to add a photo' : '';
+      photo.appendChild(empty);
+    }
+    card.appendChild(photo);
+
+    var heading = document.createElement('h3');
+    var titleEl = document.createElement(href && !editing ? 'a' : 'span');
+    if (href && !editing) titleEl.setAttribute('href', href);
+    titleEl.setAttribute('data-list-field', 'title');
+    titleEl.innerHTML = valueToHtml(item.title, false);
+    heading.appendChild(titleEl);
+    card.appendChild(heading);
+
+    ['artist', 'price'].forEach(function (field) {
+      var p = document.createElement('p');
+      p.className = 'work-price';
+      p.setAttribute('data-list-field', field);
+      p.innerHTML = valueToHtml(item[field], false);
+      card.appendChild(p);
+    });
+
+    if (editing) {
+      var linkBtn = document.createElement('button');
+      linkBtn.type = 'button';
+      linkBtn.className = 'btn cms-list-link-btn';
+      linkBtn.textContent = href ? 'Links to ' + href : 'Set artwork link';
+      card.appendChild(linkBtn);
+
+      var remove = document.createElement('button');
+      remove.type = 'button';
+      remove.className = 'cms-block-remove cms-list-remove';
+      remove.setAttribute('aria-label', 'Remove this artwork');
+      remove.textContent = '×';
+      card.appendChild(remove);
+      card.classList.add('is-editing');
+    } else if (href) {
+      var view = document.createElement('a');
+      view.href = href;
+      view.className = 'btn';
+      view.textContent = 'View Artwork';
+      card.appendChild(view);
+    }
+
+    if (editing) {
+      card.querySelectorAll('[data-list-field]').forEach(function (el) {
+        el.contentEditable = 'true';
+      });
+    }
+    return card;
+  }
+
+  // A "coming soon" style placeholder marked data-cms-list-empty="<key>" stands in whenever
+  // its list has nothing in it, and steps aside as soon as a card is added.
+  function updateListEmptyState(key, count) {
+    document.querySelectorAll('[data-cms-list-empty="' + key + '"]').forEach(function (el) {
+      el.classList.toggle('cms-empty-hidden', count > 0);
+    });
+  }
+
+  function renderList(key) {
+    var container = document.querySelector('[data-cms-list="' + key + '"]');
+    if (!container) return;
+    var stored = editState.content && editState.content.lists && editState.content.lists[key];
+    updateListEmptyState(key, stored ? stored.length : container.querySelectorAll('.work-card').length);
+    // No stored list and not editing: the shipped markup stands.
+    if (!stored && !editState.editing) return;
+    if (!stored) stored = seedListFromMarkup(container, key);
+
+    container.innerHTML = '';
+    stored.forEach(function (item) {
+      container.appendChild(buildListCard(key, item, editState.editing));
+    });
+    if (editState.editing) {
+      var controls = document.createElement('div');
+      controls.className = 'cms-zone-controls cms-list-controls';
+      controls.innerHTML = '<button type="button" class="cms-add-card-btn" data-list="' + key + '">+ Add artwork</button>';
+      container.appendChild(controls);
+    }
+  }
+
+  function renderAllLists() {
+    document.querySelectorAll('[data-cms-list]').forEach(function (container) {
+      renderList(container.getAttribute('data-cms-list'));
+    });
+  }
+
+
+  // ---- page visibility ----
+  // content.pages[path] = { hidden: true }. A hidden page drops out of every nav and turns
+  // visitors away; a signed-in admin can still open it, to edit it or to put it back.
+  //
+  // Worth knowing: the page's HTML file is still served, so this hides a page from the site
+  // rather than sealing it off. Anyone with the direct URL and JavaScript disabled can still
+  // read the shipped markup. For a page that must be genuinely unreachable, delete the file.
+
+  function normalizePath(value) {
+    var path = String(value || '').split('#')[0].split('?')[0];
+    if (/^[a-z][a-z0-9+.-]*:/i.test(path)) {
+      if (!/^https?:/i.test(path)) return null;           // mailto:, tel:, …
+      try { path = new URL(path).pathname; } catch (e) { return null; }
+    }
+    if (path.charAt(0) !== '/') return null;              // relative or off-site
+    path = path.replace(/\/+$/, '');
+    return path || '/';
+  }
+
+  function allPages() {
+    // The header nav is the site's own list of pages; custom pages add themselves.
+    var seen = {};
+    var out = [];
+    document.querySelectorAll('.site-header .nav a[href]').forEach(function (a) {
+      var path = normalizePath(a.getAttribute('href'));
+      if (!path || seen[path]) return;
+      seen[path] = 1;
+      out.push({ path: path, label: a.textContent.trim() });
+    });
+    var pages = (editState.content && editState.content.pages) || {};
+    Object.keys(pages).forEach(function (path) {
+      if (seen[path]) return;
+      seen[path] = 1;
+      out.push({ path: path, label: pages[path].title || path, custom: !!pages[path].custom });
+    });
+    return out;
+  }
+
+  function isPageHidden(path) {
+    var pages = editState.content && editState.content.pages;
+    return !!(pages && pages[path] && pages[path].hidden);
+  }
+
+  function setPageHidden(path, hidden) {
+    var pages = editState.content.pages || (editState.content.pages = {});
+    var entry = pages[path] || (pages[path] = {});
+    if (hidden) entry.hidden = true; else delete entry.hidden;
+    if (!Object.keys(entry).length) delete pages[path];
+    applyPageVisibility();
+    markDirty();
+  }
+
+  // Links to a hidden page disappear for visitors. While editing they stay put but are
+  // struck through, so an admin can still see and reach what they have hidden.
+  function applyPageVisibility() {
+    document.querySelectorAll('.site-header a[href], .site-footer a[href]').forEach(function (a) {
+      var path = normalizePath(a.getAttribute('href'));
+      if (!path) return;
+      var hidden = isPageHidden(path);
+      a.classList.toggle('cms-hidden-link', hidden && !editState.editing);
+      a.classList.toggle('cms-hidden-link-marked', hidden && editState.editing);
+    });
+  }
+
+  // Called as soon as content lands — before we know whether anyone is signed in — so a
+  // hidden page never sits on screen while that check is in flight.
+  function guardHiddenPage() {
+    if (isPageHidden(normalizePath(window.location.pathname))) {
+      document.body.classList.add('cms-page-blocked');
+    }
+  }
+
+  function resolveHiddenPage(isAdmin) {
+    if (!document.body.classList.contains('cms-page-blocked')) return;
+    if (!isAdmin) { window.location.replace('/'); return; }
+    document.body.classList.remove('cms-page-blocked');
+    var banner = document.createElement('div');
+    banner.className = 'cms-hidden-banner';
+    banner.id = 'cmsHiddenBanner';
+    banner.textContent = 'This page is hidden from visitors. Only you can see it.';
+    document.body.appendChild(banner);
+  }
+
+  function togglePagesPanel() {
+    var existing = document.getElementById('cmsPagesPanel');
+    if (existing) { existing.remove(); return; }
+    var panel = document.createElement('div');
+    panel.id = 'cmsPagesPanel';
+    panel.className = 'cms-pages-panel';
+    panel.innerHTML = '<p class="cms-panel-title">Pages on this site</p>' +
+      allPages().map(function (page) {
+        var hidden = isPageHidden(page.path);
+        return '<label class="cms-page-row">' +
+          '<input type="checkbox" data-page-path="' + escapeHtml(page.path) + '"' + (hidden ? '' : ' checked') + '>' +
+          '<span class="cms-page-label">' + escapeHtml(page.label) + '</span>' +
+          '<span class="cms-page-path">' + escapeHtml(page.path) + '</span>' +
+          (page.custom ? '<button type="button" class="cms-page-delete" data-delete-page="' + escapeHtml(page.path) + '" aria-label="Delete this page">×</button>' : '') +
+          '</label>';
+      }).join('') +
+      '<button type="button" class="cms-new-page-btn" id="cmsNewPageBtn">+ New page</button>' +
+      '<p class="cms-panel-note">Unticked pages are hidden from the menu and turned away from visitors.</p>';
+    document.body.appendChild(panel);
+    panel.querySelectorAll('[data-page-path]').forEach(function (box) {
+      box.addEventListener('change', function () {
+        setPageHidden(box.getAttribute('data-page-path'), !box.checked);
+      });
+    });
+    var newBtn = panel.querySelector('#cmsNewPageBtn');
+    if (newBtn) newBtn.addEventListener('click', createPage);
+    panel.querySelectorAll('[data-delete-page]').forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        deletePage(btn.getAttribute('data-delete-page'));
+      });
+    });
+  }
+
+  // ---- adjustable photo/text split ----
+  // A <section class="split" data-cms-split="how.layout"> can have its photo/text balance
+  // moved by dragging the seam between the two halves. Stored as
+  // content.layout[key] = { media: <percent of the row given to the photo side> }.
+  // Below the layout's mobile breakpoint the two halves stack, so the ratio stops applying.
+
+  var SPLIT_MIN = 20;
+  var SPLIT_MAX = 75;
+
+  function splitRatio(key) {
+    var layout = editState.content && editState.content.layout;
+    var value = layout && layout[key] && layout[key].media;
+    value = parseFloat(value);
+    if (!isFinite(value)) return null;
+    return Math.min(SPLIT_MAX, Math.max(SPLIT_MIN, value));
+  }
+
+  // `split--reverse` puts the photo first visually, so which grid track is the photo
+  // depends on that class rather than on DOM order.
+  function applySplitRatio(key) {
+    var section = document.querySelector('[data-cms-split="' + key + '"]');
+    if (!section) return;
+    var ratio = splitRatio(key);
+    if (ratio == null) { section.style.removeProperty('grid-template-columns'); return; }
+    var mediaFirst = section.classList.contains('split--reverse');
+    section.style.gridTemplateColumns = mediaFirst
+      ? ratio + '% 1fr'
+      : (100 - ratio) + '% 1fr';
+  }
+
+  function applyAllSplitRatios() {
+    document.querySelectorAll('[data-cms-split]').forEach(function (section) {
+      applySplitRatio(section.getAttribute('data-cms-split'));
+    });
+  }
+
+  function currentSplitPercent(section, key) {
+    var ratio = splitRatio(key);
+    if (ratio != null) return ratio;
+    // Nothing stored yet — read back whatever the stylesheet is currently doing.
+    var media = section.classList.contains('split--reverse')
+      ? section.querySelector('.split-content')
+      : section.querySelector('.split-content');
+    if (!media) return 50;
+    var pct = (media.getBoundingClientRect().width / section.getBoundingClientRect().width) * 100;
+    return Math.min(SPLIT_MAX, Math.max(SPLIT_MIN, Math.round(pct)));
+  }
+
+  function renderSplitHandles() {
+    document.querySelectorAll('.cms-split-handle').forEach(function (h) { h.remove(); });
+    if (!editState.editing) return;
+    document.querySelectorAll('[data-cms-split]').forEach(function (section) {
+      if (getComputedStyle(section).gridTemplateColumns.split(' ').length < 2) return; // stacked
+      var handle = document.createElement('div');
+      handle.className = 'cms-split-handle';
+      handle.setAttribute('role', 'separator');
+      handle.setAttribute('aria-label', 'Drag to rebalance photo and text');
+      handle.innerHTML = '<span class="cms-split-grip"></span><span class="cms-split-readout"></span>';
+      section.style.position = section.style.position || 'relative';
+      section.appendChild(handle);
+      positionSplitHandle(section, handle);
+    });
+  }
+
+  function positionSplitHandle(section, handle) {
+    var key = section.getAttribute('data-cms-split');
+    var pct = currentSplitPercent(section, key);
+    var mediaFirst = section.classList.contains('split--reverse');
+    var seam = mediaFirst ? pct : 100 - pct;
+    handle.style.left = seam + '%';
+    var readout = handle.querySelector('.cms-split-readout');
+    if (readout) readout.textContent = Math.round(pct) + '% photo / ' + Math.round(100 - pct) + '% text';
+  }
+
+  function beginSplitDrag(e, handle) {
+    var section = handle.closest('[data-cms-split]');
+    if (!section) return;
+    var key = section.getAttribute('data-cms-split');
+    var mediaFirst = section.classList.contains('split--reverse');
+    e.preventDefault();
+    document.body.classList.add('cms-split-dragging');
+
+    function onMove(ev) {
+      var rect = section.getBoundingClientRect();
+      var x = (ev.touches ? ev.touches[0].clientX : ev.clientX) - rect.left;
+      var seam = Math.min(100, Math.max(0, (x / rect.width) * 100));
+      var pct = mediaFirst ? seam : 100 - seam;
+      pct = Math.min(SPLIT_MAX, Math.max(SPLIT_MIN, pct));
+      var layout = editState.content.layout || (editState.content.layout = {});
+      (layout[key] || (layout[key] = {})).media = Math.round(pct);
+      applySplitRatio(key);
+      positionSplitHandle(section, handle);
+    }
+    function onUp() {
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+      document.removeEventListener('touchmove', onMove);
+      document.removeEventListener('touchend', onUp);
+      document.body.classList.remove('cms-split-dragging');
+      markDirty();
+    }
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+    document.addEventListener('touchmove', onMove, { passive: false });
+    document.addEventListener('touchend', onUp);
+  }
+
+  document.addEventListener('mousedown', function (e) {
+    var handle = e.target.closest && e.target.closest('.cms-split-handle');
+    if (handle) beginSplitDrag(e, handle);
+  });
+  document.addEventListener('touchstart', function (e) {
+    var handle = e.target.closest && e.target.closest('.cms-split-handle');
+    if (handle) beginSplitDrag(e, handle);
+  }, { passive: false });
+
+  window.addEventListener('resize', function () {
+    if (editState.editing) renderSplitHandles();
+  });
+
+
+  // ---- admin-created pages ----
+  // A page an admin adds lives entirely in content.pages[path] as
+  // { custom: true, title, sections: [{ id, type, … }] }. There is no file for it — a
+  // vercel.json rewrite serves /page/index.html for any path that isn't a real file, and
+  // the shell below renders whichever page the URL asks for. Links are injected into the
+  // nav at runtime, the same way every other bit of content is applied.
+
+  var PAGE_TEMPLATES = [
+    { type: 'heading', label: 'Heading', fields: ['eyebrow', 'heading', 'intro'] },
+    { type: 'text', label: 'Text', fields: ['body'] },
+    { type: 'columns', label: 'Two columns', fields: ['left', 'right'] },
+    { type: 'photo', label: 'Photo', fields: ['caption'], image: true },
+    { type: 'photo-text', label: 'Photo + text', fields: ['heading', 'body'], image: true }
+  ];
+
+  var TEMPLATE_DEFAULTS = {
+    heading: { eyebrow: 'Section label', heading: 'A new heading', intro: 'Introduce this section.' },
+    text: { body: 'Write something here.' },
+    columns: { left: 'Left column.', right: 'Right column.' },
+    photo: { caption: 'Photo caption', image: '' },
+    'photo-text': { heading: 'Heading', body: 'Say more about it here.', image: '' }
+  };
+
+  function slugify(title) {
+    var slug = String(title || '').toLowerCase()
+      .replace(/['’]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+    return slug || 'page';
+  }
+
+  function customPages() {
+    var pages = (editState.content && editState.content.pages) || {};
+    return Object.keys(pages).filter(function (p) { return pages[p].custom; });
+  }
+
+  function createPage() {
+    var title = prompt('What should the new page be called?', 'New Page');
+    if (title === null || !title.trim()) return;
+    title = title.trim();
+    var base = '/' + slugify(title);
+    var path = base;
+    var pages = editState.content.pages || (editState.content.pages = {});
+    for (var n = 2; pages[path]; n++) path = base + '-' + n;
+    pages[path] = { custom: true, title: title, sections: [] };
+    markDirty();
+    // Save immediately: the new page has to exist server-side before we can navigate to it.
+    saveEdits(function () { window.location.href = path + '/'; });
+  }
+
+  function deletePage(path) {
+    var pages = editState.content.pages || {};
+    if (!pages[path] || !pages[path].custom) return;
+    if (!confirm('Delete "' + (pages[path].title || path) + '" and everything on it? This cannot be undone.')) return;
+    delete pages[path];
+    markDirty();
+    var here = normalizePath(window.location.pathname);
+    if (here === path) { saveEdits(function () { window.location.href = '/'; }); return; }
+    applyPageVisibility();
+    togglePagesPanel(); togglePagesPanel();
+  }
+
+  // Custom pages have no hardcoded nav link, so one is added wherever the nav lives.
+  function injectCustomNavLinks() {
+    document.querySelectorAll('.cms-injected-nav-link').forEach(function (el) { el.remove(); });
+    var pages = (editState.content && editState.content.pages) || {};
+    customPages().forEach(function (path) {
+      if (pages[path].hidden && !editState.editing) return;
+      document.querySelectorAll('.site-header .nav, .site-footer nav').forEach(function (nav) {
+        var a = document.createElement('a');
+        a.href = path + '/';
+        a.textContent = pages[path].title || path;
+        a.className = 'cms-injected-nav-link';
+        if (normalizePath(window.location.pathname) === path) a.classList.add('is-active');
+        if (pages[path].hidden) a.classList.add('cms-hidden-link-marked');
+        nav.appendChild(a);
+      });
+    });
+  }
+
+  function pageSections(path) {
+    var page = (editState.content.pages || {})[path];
+    if (!page) return [];
+    return page.sections || (page.sections = []);
+  }
+
+  function fieldHtml(sectionId, field, value, tag, className) {
+    var el = document.createElement(tag);
+    if (className) el.className = className;
+    el.setAttribute('data-page-field', sectionId + '|' + field);
+    el.innerHTML = valueToHtml(value, true);
+    if (editState.editing) el.contentEditable = 'true';
+    return el;
+  }
+
+  function photoHtml(section) {
+    var wrap = document.createElement('div');
+    wrap.className = 'cms-page-photo';
+    wrap.setAttribute('data-section-id', section.id);
+    if (section.image) {
+      var img = document.createElement('img');
+      img.src = section.image;
+      img.alt = '';
+      img.classList.add('cms-visible');
+      wrap.appendChild(img);
+    } else {
+      var empty = document.createElement('div');
+      empty.className = 'cms-block-image-empty';
+      empty.textContent = editState.editing ? 'Click to add a photo' : '';
+      wrap.appendChild(empty);
+    }
+    return wrap;
+  }
+
+  function buildSection(section) {
+    var el = document.createElement('section');
+    el.className = 'cms-page-section cms-page-section--' + section.type;
+    el.setAttribute('data-section-id', section.id);
+
+    if (section.type === 'heading') {
+      el.classList.add('section-head');
+      el.appendChild(fieldHtml(section.id, 'eyebrow', section.eyebrow, 'p', 'eyebrow'));
+      el.appendChild(fieldHtml(section.id, 'heading', section.heading, 'h2', 'h-page'));
+      var rule = document.createElement('hr');
+      rule.className = 'gold-rule gold-rule--center';
+      el.appendChild(rule);
+      el.appendChild(fieldHtml(section.id, 'intro', section.intro, 'p', 'body-copy'));
+    } else if (section.type === 'text') {
+      el.appendChild(fieldHtml(section.id, 'body', section.body, 'div', 'body-copy'));
+    } else if (section.type === 'columns') {
+      var grid = document.createElement('div');
+      grid.className = 'cms-page-columns';
+      grid.appendChild(fieldHtml(section.id, 'left', section.left, 'div', 'body-copy'));
+      grid.appendChild(fieldHtml(section.id, 'right', section.right, 'div', 'body-copy'));
+      el.appendChild(grid);
+    } else if (section.type === 'photo') {
+      el.appendChild(photoHtml(section));
+      el.appendChild(fieldHtml(section.id, 'caption', section.caption, 'p', 'cms-page-caption'));
+    } else if (section.type === 'photo-text') {
+      var split = document.createElement('div');
+      split.className = 'cms-page-split';
+      split.appendChild(photoHtml(section));
+      var copy = document.createElement('div');
+      copy.className = 'cms-page-split-copy';
+      copy.appendChild(fieldHtml(section.id, 'heading', section.heading, 'h2', 'h-section'));
+      copy.appendChild(fieldHtml(section.id, 'body', section.body, 'div', 'body-copy'));
+      split.appendChild(copy);
+      el.appendChild(split);
+    }
+
+    if (editState.editing) {
+      el.classList.add('is-editing');
+      var remove = document.createElement('button');
+      remove.type = 'button';
+      remove.className = 'cms-block-remove cms-section-remove';
+      remove.setAttribute('aria-label', 'Remove this section');
+      remove.textContent = '×';
+      el.appendChild(remove);
+
+      var up = document.createElement('button');
+      up.type = 'button';
+      up.className = 'cms-section-move';
+      up.setAttribute('data-move', 'up');
+      up.setAttribute('aria-label', 'Move section up');
+      up.textContent = '↑';
+      el.appendChild(up);
+
+      var down = document.createElement('button');
+      down.type = 'button';
+      down.className = 'cms-section-move cms-section-move--down';
+      down.setAttribute('data-move', 'down');
+      down.setAttribute('aria-label', 'Move section down');
+      down.textContent = '↓';
+      el.appendChild(down);
+    }
+    return el;
+  }
+
+  function renderCustomPage() {
+    var host = document.querySelector('[data-cms-page]');
+    if (!host) return;
+    var path = normalizePath(window.location.pathname);
+    var page = (editState.content.pages || {})[path];
+
+    if (!page || !page.custom) {
+      host.innerHTML = '<section class="section-head"><h1 class="h-page">Page not found</h1>' +
+        '<p class="body-copy" style="max-width:520px;margin:0 auto;">This page does not exist. ' +
+        '<a href="/">Return home</a>.</p></section>';
+      return;
+    }
+    document.title = page.title + ' — ArtUp Life';
+    host.innerHTML = '';
+    pageSections(path).forEach(function (section) { host.appendChild(buildSection(section)); });
+
+    if (editState.editing) {
+      var controls = document.createElement('div');
+      controls.className = 'cms-zone-controls cms-section-controls';
+      controls.innerHTML = PAGE_TEMPLATES.map(function (t) {
+        return '<button type="button" class="cms-add-section-btn" data-template="' + t.type + '">+ ' + t.label + '</button>';
+      }).join('');
+      host.appendChild(controls);
+    } else if (!pageSections(path).length) {
+      host.innerHTML = '<section class="section-head"><h1 class="h-page">' + escapeHtml(page.title) + '</h1></section>';
+    }
+  }
+
   // ---- inline on-page editor (visible only to a signed-in admin) ----
   var editState = { content: null, username: null, dirty: false, saving: false, editing: false };
   var fileInput = null;
@@ -483,6 +1086,25 @@
   // Pulls an editable's current DOM state back into editState. Called by the `input` event
   // and again after every toolbar command, which rewrites the DOM without firing `input`.
   function captureFromElement(el) {
+    if (el.hasAttribute('data-page-field')) {
+      var parts = el.getAttribute('data-page-field').split('|');
+      var section = pageSections(normalizePath(window.location.pathname)).filter(function (s) {
+        return s.id === parts[0];
+      })[0];
+      if (section) section[parts[1]] = elementToStoredValue(el);
+      markDirty();
+      return;
+    }
+    if (el.hasAttribute('data-list-field')) {
+      var card = el.closest('[data-item-id]');
+      if (!card) return;
+      var item = listItems(card.getAttribute('data-list-key')).filter(function (i) {
+        return i.id === card.getAttribute('data-item-id');
+      })[0];
+      if (item) item[el.getAttribute('data-list-field')] = elementToStoredValue(el);
+      markDirty();
+      return;
+    }
     if (el.hasAttribute('data-block-zone')) {
       var zone = el.getAttribute('data-block-zone');
       var blockId = el.getAttribute('data-block-id');
@@ -519,7 +1141,7 @@
     el.className = 'cms-status' + (ok ? ' ok' : '');
   }
 
-  function saveEdits() {
+  function saveEdits(onDone) {
     if (editState.saving) return;
     editState.saving = true;
     var btn = document.getElementById('cmsSaveBtn');
@@ -530,6 +1152,7 @@
       if (res.ok) {
         editState.dirty = false;
         setEditStatus('All changes saved', true);
+        if (typeof onDone === 'function') onDone();
       } else {
         if (btn) btn.disabled = false;
         setEditStatus('Save failed — try again', false);
@@ -555,24 +1178,70 @@
     return fileInput;
   }
 
-  function fileToResizedBase64(file, maxDim, quality) {
+  // Logos and other line art arrive as PNG/GIF/WebP with a transparent background, and
+  // canvas flattens transparency onto BLACK when it encodes JPEG — which turned a
+  // black-on-transparent logo into a solid black rectangle. So alpha-capable formats are
+  // re-encoded as PNG and SVG is passed through untouched; photographs stay JPEG, where the
+  // compression is worth having.
+  var ALPHA_TYPES = { 'image/png': 1, 'image/gif': 1, 'image/webp': 1 };
+  var MAX_UPLOAD_BASE64 = 3 * 1024 * 1024; // stay well under the serverless request ceiling
+
+  function fileToBase64(file) {
+    return new Promise(function (resolve, reject) {
+      var reader = new FileReader();
+      reader.onerror = reject;
+      reader.onload = function () {
+        var url = String(reader.result);
+        resolve(url.slice(url.indexOf(',') + 1));
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function loadImageFromFile(file) {
     return new Promise(function (resolve, reject) {
       var img = new Image();
       var reader = new FileReader();
       reader.onerror = reject;
       reader.onload = function () { img.src = reader.result; };
       img.onerror = reject;
-      img.onload = function () {
-        var scale = Math.min(1, maxDim / Math.max(img.width, img.height));
-        var w = Math.round(img.width * scale);
-        var h = Math.round(img.height * scale);
-        var canvas = document.createElement('canvas');
-        canvas.width = w; canvas.height = h;
-        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        var dataUrl = canvas.toDataURL('image/jpeg', quality);
-        resolve(dataUrl.slice(dataUrl.indexOf(',') + 1));
-      };
+      img.onload = function () { resolve(img); };
       reader.readAsDataURL(file);
+    });
+  }
+
+  function encodeImage(img, maxDim, keepAlpha, quality) {
+    var scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+    var canvas = document.createElement('canvas');
+    canvas.width = Math.max(1, Math.round(img.width * scale));
+    canvas.height = Math.max(1, Math.round(img.height * scale));
+    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+    var dataUrl = keepAlpha ? canvas.toDataURL('image/png') : canvas.toDataURL('image/jpeg', quality);
+    return dataUrl.slice(dataUrl.indexOf(',') + 1);
+  }
+
+  function prepareUpload(file, maxDim, quality) {
+    // Vector logos survive best untouched — rasterizing one would only throw away quality.
+    if (file.type === 'image/svg+xml') {
+      return fileToBase64(file).then(function (base64) {
+        return { base64: base64, contentType: 'image/svg+xml', extension: '.svg' };
+      });
+    }
+    var keepAlpha = !!ALPHA_TYPES[file.type];
+    return loadImageFromFile(file).then(function (img) {
+      // PNG is lossless, so a large transparent image can still come out big; step the
+      // dimensions down until it fits rather than failing the upload outright.
+      var dim = maxDim;
+      var base64 = encodeImage(img, dim, keepAlpha, quality);
+      for (var i = 0; i < 3 && base64.length > MAX_UPLOAD_BASE64; i++) {
+        dim = Math.round(dim / 2);
+        base64 = encodeImage(img, dim, keepAlpha, quality);
+      }
+      return {
+        base64: base64,
+        contentType: keepAlpha ? 'image/png' : 'image/jpeg',
+        extension: keepAlpha ? '.png' : '.jpg'
+      };
     });
   }
 
@@ -581,12 +1250,18 @@
       ? document.querySelectorAll('[data-cms="' + target.key + '"]')
       : target.mode === 'blockImage'
         ? document.querySelectorAll('[data-block-zone="' + target.zone + '"][data-block-id="' + target.blockId + '"]')
-        : [];
+        : target.mode === 'listImage'
+          ? document.querySelectorAll('[data-item-id="' + target.itemId + '"] .cms-list-photo')
+          : [];
     busyEls.forEach(function (el) { el.classList.add('cms-uploading'); });
-    fileToResizedBase64(file, 1800, 0.82).then(function (base64) {
+    prepareUpload(file, 1800, 0.82).then(function (prepared) {
       return apiCall('/api/admin/upload', {
         method: 'POST',
-        body: JSON.stringify({ filename: file.name.replace(/\.[^.]+$/, '.jpg'), contentType: 'image/jpeg', dataBase64: base64 })
+        body: JSON.stringify({
+          filename: file.name.replace(/\.[^.]+$/, '') + prepared.extension,
+          contentType: prepared.contentType,
+          dataBase64: prepared.base64
+        })
       });
     }).then(function (res) {
       busyEls.forEach(function (el) { el.classList.remove('cms-uploading'); });
@@ -598,6 +1273,14 @@
       } else if (target.mode === 'newBlock') {
         zoneBlocks(target.zone).push({ id: genBlockId(), type: 'image', value: url });
         renderZone(target.zone);
+      } else if (target.mode === 'sectionImage') {
+        var sec = pageSections(normalizePath(window.location.pathname)).filter(function (s) { return s.id === target.sectionId; })[0];
+        if (sec) sec.image = url;
+        renderCustomPage();
+      } else if (target.mode === 'listImage') {
+        var listItem = listItems(target.key).filter(function (i) { return i.id === target.itemId; })[0];
+        if (listItem) listItem.image = url;
+        renderList(target.key);
       } else if (target.mode === 'blockImage') {
         var block = zoneBlocks(target.zone).filter(function (b) { return b.id === target.blockId; })[0];
         if (block) block.value = url;
@@ -1060,12 +1743,14 @@
     bar.innerHTML =
       '<span class="cms-hint">Click any text or photo to change it. Select words to format them.</span>' +
       '<div class="cms-actions">' +
+      '<button class="cms-colors-btn" id="cmsPagesBtn" type="button">Pages</button>' +
       '<button class="cms-colors-btn" id="cmsColorsBtn" type="button">Colors</button>' +
       '<span class="cms-status" id="cmsStatus">All changes saved</span>' +
       '<button class="cms-save-btn" id="cmsSaveBtn" type="button" disabled>Save changes</button>' +
       '<button class="cms-exit-btn" id="cmsExitBtn" type="button">Exit editing</button>' +
       '</div>';
     document.body.appendChild(bar);
+    document.getElementById('cmsPagesBtn').addEventListener('click', togglePagesPanel);
     document.getElementById('cmsColorsBtn').addEventListener('click', toggleColorPopover);
     document.getElementById('cmsSaveBtn').addEventListener('click', saveEdits);
     document.getElementById('cmsExitBtn').addEventListener('click', function () { exitEditMode(false); });
@@ -1084,6 +1769,11 @@
       el.contentEditable = 'true';
     });
     renderAllZones();
+    renderAllLists();
+    injectCustomNavLinks();
+    applyPageVisibility();
+    renderSplitHandles();
+    renderCustomPage();
   }
 
   function exitEditMode(skipConfirm) {
@@ -1103,7 +1793,14 @@
     savedRange = null;
     var pop = document.getElementById('cmsColorPopover');
     if (pop) pop.remove();
+    var pagesPanel = document.getElementById('cmsPagesPanel');
+    if (pagesPanel) pagesPanel.remove();
     renderAllZones();
+    renderAllLists();
+    injectCustomNavLinks();
+    applyPageVisibility();
+    renderSplitHandles();
+    renderCustomPage();
     renderSigninPill(editState.username);
   }
 
@@ -1125,7 +1822,7 @@
 
   document.addEventListener('input', function (e) {
     if (!e.target || !e.target.closest) return;
-    var el = e.target.closest('.cms-block-text[data-block-zone][contenteditable], [data-cms][contenteditable]');
+    var el = e.target.closest('.cms-block-text[data-block-zone][contenteditable], [data-cms][contenteditable], [data-list-field][contenteditable], [data-page-field][contenteditable]');
     if (!el) return;
     captureFromElement(el);
     positionToolbar();
@@ -1159,7 +1856,7 @@
 
   document.addEventListener('click', function (e) {
     if (!editState.editing) return;
-    if (e.target.closest && e.target.closest('.cms-toolbar')) return;
+    if (e.target.closest && e.target.closest('.cms-toolbar, .cms-pages-panel, .cms-split-handle')) return;
 
     var addText = e.target.closest && e.target.closest('.cms-add-text-btn');
     if (addText) {
@@ -1177,6 +1874,108 @@
     if (addPhoto) {
       e.preventDefault();
       uploadTarget = { mode: 'newBlock', zone: addPhoto.getAttribute('data-zone') };
+      ensureFileInput().click();
+      return;
+    }
+
+    var addSection = e.target.closest && e.target.closest('.cms-add-section-btn');
+    if (addSection) {
+      e.preventDefault();
+      var tpl = addSection.getAttribute('data-template');
+      var fresh = { id: genBlockId(), type: tpl };
+      Object.keys(TEMPLATE_DEFAULTS[tpl] || {}).forEach(function (k) { fresh[k] = TEMPLATE_DEFAULTS[tpl][k]; });
+      pageSections(normalizePath(window.location.pathname)).push(fresh);
+      renderCustomPage();
+      markDirty();
+      return;
+    }
+
+    var secRemove = e.target.closest && e.target.closest('.cms-section-remove');
+    if (secRemove) {
+      e.preventDefault();
+      e.stopPropagation();
+      var sList = pageSections(normalizePath(window.location.pathname));
+      var sId = secRemove.closest('[data-section-id]').getAttribute('data-section-id');
+      var sIdx = sList.map(function (s) { return s.id; }).indexOf(sId);
+      if (sIdx !== -1) sList.splice(sIdx, 1);
+      renderCustomPage();
+      markDirty();
+      return;
+    }
+
+    var secMove = e.target.closest && e.target.closest('.cms-section-move');
+    if (secMove) {
+      e.preventDefault();
+      e.stopPropagation();
+      var mList = pageSections(normalizePath(window.location.pathname));
+      var mId = secMove.closest('[data-section-id]').getAttribute('data-section-id');
+      var from = mList.map(function (s) { return s.id; }).indexOf(mId);
+      var to = from + (secMove.getAttribute('data-move') === 'up' ? -1 : 1);
+      if (from !== -1 && to >= 0 && to < mList.length) {
+        mList.splice(to, 0, mList.splice(from, 1)[0]);
+        renderCustomPage();
+        markDirty();
+      }
+      return;
+    }
+
+    var secPhoto = e.target.closest && e.target.closest('.cms-page-photo');
+    if (secPhoto) {
+      e.preventDefault();
+      e.stopPropagation();
+      uploadTarget = { mode: 'sectionImage', sectionId: secPhoto.getAttribute('data-section-id') };
+      ensureFileInput().click();
+      return;
+    }
+
+    var addCard = e.target.closest && e.target.closest('.cms-add-card-btn');
+    if (addCard) {
+      e.preventDefault();
+      var listKey = addCard.getAttribute('data-list');
+      listItems(listKey).push({ id: genBlockId(), image: '', title: 'New artwork', artist: 'Artist name', price: '$0 CAD', href: '' });
+      renderList(listKey);
+      markDirty();
+      return;
+    }
+
+    var cardRemove = e.target.closest && e.target.closest('.cms-list-remove');
+    if (cardRemove) {
+      e.preventDefault();
+      e.stopPropagation();
+      var rCard = cardRemove.closest('[data-item-id]');
+      var rKey = rCard.getAttribute('data-list-key');
+      var arr = listItems(rKey);
+      var rIdx = arr.map(function (i) { return i.id; }).indexOf(rCard.getAttribute('data-item-id'));
+      if (rIdx !== -1) arr.splice(rIdx, 1);
+      renderList(rKey);
+      markDirty();
+      return;
+    }
+
+    var cardLink = e.target.closest && e.target.closest('.cms-list-link-btn');
+    if (cardLink) {
+      e.preventDefault();
+      e.stopPropagation();
+      var lCard = cardLink.closest('[data-item-id]');
+      var lKey = lCard.getAttribute('data-list-key');
+      var lItem = listItems(lKey).filter(function (i) { return i.id === lCard.getAttribute('data-item-id'); })[0];
+      if (!lItem) return;
+      var nextHref = prompt('Where should this artwork link to? (leave empty for no link)', lItem.href || '/artwork/');
+      if (nextHref === null) return;
+      nextHref = nextHref.trim();
+      if (nextHref && !rtSafeHref(nextHref)) { alert('That link needs to start with / or https://.'); return; }
+      lItem.href = nextHref;
+      renderList(lKey);
+      markDirty();
+      return;
+    }
+
+    var cardPhoto = e.target.closest && e.target.closest('.cms-list-photo');
+    if (cardPhoto) {
+      e.preventDefault();
+      e.stopPropagation();
+      var pCard = cardPhoto.closest('[data-item-id]');
+      uploadTarget = { mode: 'listImage', key: pCard.getAttribute('data-list-key'), itemId: pCard.getAttribute('data-item-id') };
       ensureFileInput().click();
       return;
     }
@@ -1245,13 +2044,18 @@
       editState.content.colors = editState.content.colors || {};
       editState.content.blocks = editState.content.blocks || {};
       editState.content.styles = editState.content.styles || {};
+      editState.content.lists = editState.content.lists || {};
+      editState.content.pages = editState.content.pages || {};
+      editState.content.layout = editState.content.layout || {};
       ensureFontsForContent(content);
       applyContent(content);
       revealDefaultImages();
       return apiCall('/api/admin/me');
     })
     .then(function (meRes) {
-      if (meRes && meRes.ok && meRes.data && meRes.data.authenticated) {
+      var isAdmin = !!(meRes && meRes.ok && meRes.data && meRes.data.authenticated);
+      resolveHiddenPage(isAdmin);
+      if (isAdmin) {
         editState.username = meRes.data.username;
         renderSigninPill(meRes.data.username);
       }
@@ -1259,5 +2063,6 @@
     .catch(function () {
       // offline, not logged in, or not yet configured — hardcoded content stands, just make it visible
       revealDefaultImages();
+      document.body.classList.remove('cms-page-blocked');
     });
 })();
