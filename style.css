@@ -709,3 +709,58 @@ form.is-submitted { display: none; }
   padding: 10px 16px; cursor: pointer; border-radius: 2px;
 }
 .cms-zone-controls button:hover { background: var(--gold); color: var(--black); border-style: solid; }
+
+/* ---------- home hero panel: logo centred, half the space above it ---------- */
+/* The panel centres its content, which left ~129px empty above the logo. Anchoring the
+   content to the top with half that padding lifts the logo and copy upward. */
+.split-panel--hero { justify-content: flex-start; padding-top: 64px; }
+.hero-panel-logo { margin: 0 auto 28px; width: 170px; max-width: 60%; }
+
+/* ---------- how it works: step number beside its heading ---------- */
+.step-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px; }
+.step-head .step-num { flex: none; font-family: var(--serif); font-size: 19px; color: var(--gold); }
+.step-head .step-list-title { margin-bottom: 0 !important; min-width: 0; }
+
+/* ---------- contest + terms pages ---------- */
+.prize-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+.prize { flex: 1 1 88px; border: 1px solid var(--gold); padding: 14px 10px; text-align: center; }
+.prize-place { display: block; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-muted); }
+.prize-amount { display: block; font-family: var(--serif); font-size: 24px; margin-top: 6px; }
+
+.fact-list { margin: 8px 0 0; }
+.fact { display: grid; grid-template-columns: minmax(150px, 34%) 1fr; gap: 8px 20px; padding: 14px 0; border-top: 1px solid var(--hairline-light); }
+.fact dt { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-muted); }
+.fact dd { margin: 0; font-size: 15px; font-weight: 300; line-height: 1.6; }
+
+.notice-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; max-width: 980px; margin: 40px auto 0; }
+.notice { border-top: 1px solid var(--gold); padding-top: 20px; }
+.notice h3 { font-size: 20px; margin-bottom: 10px; }
+.notice p { margin: 0; font-size: 15px; font-weight: 300; line-height: 1.75; color: var(--ink-soft); }
+
+.legal-wrap { max-width: 860px; margin: 40px auto 0; border-top: 1px solid var(--hairline-light); }
+.legal-section { border-bottom: 1px solid var(--hairline-light); }
+.legal-section summary {
+  list-style: none; cursor: pointer; display: flex; gap: 14px; align-items: baseline;
+  padding: 20px 4px; font-family: var(--serif); font-size: 18px; line-height: 1.35;
+}
+.legal-section summary::-webkit-details-marker { display: none; }
+.legal-section summary:hover { color: var(--gold); }
+.legal-section summary::after { content: '+'; margin-left: auto; color: var(--gold); font-family: var(--sans); font-size: 20px; line-height: 1; }
+.legal-section[open] summary::after { content: '–'; }
+.legal-section h2 { display: flex; gap: 14px; align-items: baseline; padding: 24px 4px 0; font-size: 20px; }
+.legal-num { flex: none; color: var(--gold); font-family: var(--serif); }
+.legal-body { padding: 0 4px 24px; }
+.legal-body p { margin: 0 0 14px; font-size: 15px; font-weight: 300; line-height: 1.8; color: var(--ink-soft); }
+.legal-body p:last-child { margin-bottom: 0; }
+.legal-sub { font-size: 16px; margin: 18px 0 10px; }
+.legal-list { margin: 0 0 14px; padding-left: 20px; }
+.legal-list li { font-size: 15px; font-weight: 300; line-height: 1.8; color: var(--ink-soft); margin-bottom: 6px; }
+.legal-preamble p { color: var(--ink-soft); }
+.legal-contact { max-width: 860px; margin: 32px auto 0; text-align: center; font-size: 13px; color: var(--ink-muted); }
+.legal-contact a { text-decoration: underline; }
+
+@media (max-width: 760px) {
+  .notice-grid { grid-template-columns: 1fr; gap: 24px; }
+  .fact { grid-template-columns: 1fr; gap: 4px; }
+  .prize { flex-basis: calc(50% - 10px); }
+}

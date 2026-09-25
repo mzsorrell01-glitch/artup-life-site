@@ -1,7 +1,25 @@
 {
   "cleanUrls": false,
+  "redirects": [
+    {
+      "source": "/collection",
+      "destination": "/contest/",
+      "permanent": true
+    },
+    {
+      "source": "/collection/",
+      "destination": "/contest/",
+      "permanent": true
+    }
+  ],
   "rewrites": [
-    { "source": "/:slug([^./]+)", "destination": "/page/index.html" },
-    { "source": "/:slug([^./]+)/", "destination": "/page/index.html" }
+    {
+      "source": "/:slug([^./]+)",
+      "destination": "/page/index.html"
+    },
+    {
+      "source": "/:slug([^./]+)/",
+      "destination": "/page/index.html"
+    }
   ]
 }
