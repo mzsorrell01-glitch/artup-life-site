@@ -343,9 +343,6 @@ h1, h2, h3 {
 .vote-buttons + p { text-align: center; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-muted); margin-top: 10px; }
 .earn-ring { width: 140px; height: 140px; border-radius: 999px; border: 6px solid #eee; border-top-color: var(--gold); margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; }
 .earn-ring svg { width: 44px; height: 44px; color: var(--gold); }
-.round-dots { display: flex; justify-content: center; gap: 8px; margin-top: 10px; }
-.round-dots span { width: 8px; height: 8px; border-radius: 999px; background: var(--gold); }
-.round-dots span.is-empty { background: #E4E4E4; }
 
 .cc-feature-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--hairline-light); border-top: 1px solid var(--hairline-light); }
 .cc-feature-row .value-item { background: var(--ivory); border-left: 0; }
